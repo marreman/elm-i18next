@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+
+const path = require("path")
+const program = require("commander")
+const { readFileSync } = require("fs")
+const main = require("../src/main")
+
+program
+  .version("0.1.0")
+  .option("-f, --file <path>", "The JSON file to parse")
+  .option("-m, --rootModuleName <name>", "The name of the root Elm module")
+  .parse(process.argv)
+
+const json = require(path.resolve(program.file))
+const rootModuleName = program.rootModuleName
+
+main(json, rootModuleName, process.cwd())
