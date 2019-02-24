@@ -16,7 +16,7 @@ const main = (json, rootModuleName, rootDirectory) => {
     fs.writeFileSync(path.join(fileDirectory, `${fileName}.elm`), m.file)
   })
 
-  execSync(`npx elm-format --elm-version=0.19 --yes ${rootDirectory}/`)
+  execSync(`npx elm-format --elm-version=0.19 --yes ${path.join(rootDirectory, rootModuleName)}/`)
 }
 
 module.exports = main
