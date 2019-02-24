@@ -4,9 +4,11 @@ const toElm = modules =>
     .filter(m => m.functions.length)
     .map(
       m =>
-        `module ${toUpperCamelCase(m.name)} exposing (..)\n\n${m.functions.map(
+        `module ${toModuleName(m.name)} exposing (..)\n\n${m.functions.map(
           f => `${toLowerCamelCase(f.name)} = "${f.body}"`
         )}`
     )
+
+const toModuleName = nameParts => nameParts.map(toUpperCamelCase).join(".")
 
 module.exports = toElm

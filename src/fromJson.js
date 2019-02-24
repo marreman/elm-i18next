@@ -10,7 +10,7 @@ const fromJson = (o, moduleName) => {
   ]
 
   const subModules = moduleKeys.map(name => {
-    return fromJson(o[name], `${moduleName}.${name}`)
+    return fromJson(o[name], [...moduleName, name])
   })
 
   return flatten([module, subModules])
