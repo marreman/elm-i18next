@@ -1,4 +1,4 @@
-const parse = (o, moduleName) => {
+const fromJson = (o, moduleName) => {
   const moduleKeys = Object.keys(o).filter(k => isObject(o[k]))
   const functionKeys = Object.keys(o).filter(k => !isObject(o[k]))
 
@@ -10,7 +10,7 @@ const parse = (o, moduleName) => {
   ]
 
   const subModules = moduleKeys.map(name => {
-    return parse(o[name], `${moduleName}.${name}`)
+    return fromJson(o[name], `${moduleName}.${name}`)
   })
 
   return flatten([module, subModules])
@@ -27,4 +27,4 @@ const flatten = arr1 =>
     []
   )
 
-module.exports = parse
+module.exports = fromJson

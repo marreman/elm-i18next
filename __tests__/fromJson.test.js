@@ -1,11 +1,11 @@
-const parse = require("../src/fromJson")
+const fromJson = require("../src/fromJson")
 
 test("is function", () => {
-  expect(typeof parse).toBe("function")
+  expect(typeof fromJson).toBe("function")
 })
 
 test("parses flat tree", () => {
-  expect(parse({ foo: "bar", bar: "baz" }, "ModuleName")).toEqual([
+  expect(fromJson({ foo: "bar", bar: "baz" }, "ModuleName")).toEqual([
     {
       name: "ModuleName",
       functions: [{ name: "foo", body: "bar" }, { name: "bar", body: "baz" }]
@@ -14,7 +14,7 @@ test("parses flat tree", () => {
 })
 
 test("parses nested tree", () => {
-  expect(parse({ foo: { bar: "baz" } }, "ModuleName")).toEqual([
+  expect(fromJson({ foo: { bar: "baz" } }, "ModuleName")).toEqual([
     { name: "ModuleName", functions: [] },
     {
       name: "ModuleName.foo",
@@ -25,7 +25,7 @@ test("parses nested tree", () => {
 
 test("parses deeply nested tree", () => {
   expect(
-    parse(
+    fromJson(
       {
         baz: { foo: { bar: "baz" } }
       },
