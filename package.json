@@ -11,5 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "jest": "^24.1.0"
+  },
+  "devDependencies": {
+    "rimraf": "^2.6.3"
   }
 }

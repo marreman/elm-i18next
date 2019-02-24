@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`main 1`] = `
+"module TestTranslations.Account exposing (email, error)
+
+
+email =
+    \\"Email\\"
+
+
+error =
+    \\"Something went wrong, try reloading the page.\\"
+"
+`;
+
+exports[`main 2`] = `
+"module TestTranslations.Signup exposing (incognitoMessage, loading)
+
+
+incognitoMessage =
+    \\"This is a message\\"
+
+
+loading =
+    \\"Loading\\"
+"
+`;
+
+exports[`main 3`] = `
+"module TestTranslations.Signup.NameStep exposing (label, title)
+
+
+label =
+    \\"First name\\"
+
+
+title =
+    \\"Enter your name\\"
+"
+`;

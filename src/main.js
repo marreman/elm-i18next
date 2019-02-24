@@ -1,3 +1,4 @@
+const { execSync } = require("child_process")
 const path = require("path")
 const fs = require("fs")
 const fromJson = require("./fromJson")
@@ -14,6 +15,8 @@ const main = (json, rootModuleName, rootDirectory) => {
     fs.mkdirSync(fileDirectory, { recursive: true })
     fs.writeFileSync(path.join(fileDirectory, `${fileName}.elm`), m.file)
   })
+
+  execSync(`npx elm-format --elm-version=0.19 --yes ${rootDirectory}/`)
 }
 
 module.exports = main

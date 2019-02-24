@@ -1,7 +1,20 @@
+const { readFileSync } = require("fs")
+const rimraf = require("rimraf")
+const path = require("path")
 const main = require("../../src/main")
-const translations = require("./translations.json")
+const translations = require("./testTranslations.json")
 
 test("main", () => {
-  const actual = main(translations, "Translations", __dirname)
+  const root = path.join(__dirname, "TestTranslations")
+  const file = name => readFileSync(path.join(root, name), "utf-8")
 
+  // clean up
+  rimraf.sync(root)
+
+  // run
+  main(translations, "TestTranslations", __dirname)
+
+  expect(file("Account.elm")).toMatchSnapshot()
+  expect(file("Signup.elm")).toMatchSnapshot()
+  expect(file("Signup/NameStep.elm")).toMatchSnapshot()
 })
