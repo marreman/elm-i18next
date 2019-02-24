@@ -12,7 +12,25 @@ test("array with one module", () => {
         functions: [{ name: "bar", body: "baz" }]
       }
     ])
-  ).toEqual(['module Foo exposing (..)\n\nbar = "baz"'])
+  ).toEqual([
+    { path: ["Foo"], file: 'module Foo exposing (..)\n\nbar = "baz"' }
+  ])
+})
+
+test("multiple functions", () => {
+  expect(
+    toElm([
+      {
+        name: ["foo"],
+        functions: [{ name: "bar", body: "baz" }, { name: "baz", body: "boy" }]
+      }
+    ])
+  ).toEqual([
+    {
+      path: ["Foo"],
+      file: 'module Foo exposing (..)\n\nbar = "baz"\n\nbaz = "boy"'
+    }
+  ])
 })
 
 test("array multiple modules", () => {
@@ -28,8 +46,8 @@ test("array multiple modules", () => {
       }
     ])
   ).toEqual([
-    'module Foo exposing (..)\n\nbar = "baz"',
-    'module Foo2 exposing (..)\n\nbar2 = "baz2"'
+    { path: ["Foo"], file: 'module Foo exposing (..)\n\nbar = "baz"' },
+    { path: ["Foo2"], file: 'module Foo2 exposing (..)\n\nbar2 = "baz2"' }
   ])
 })
 
@@ -41,5 +59,10 @@ test("complex module names", () => {
         functions: [{ name: "bar", body: "baz" }]
       }
     ])
-  ).toEqual(['module Foo.Bar.Baz exposing (..)\n\nbar = "baz"'])
+  ).toEqual([
+    {
+      path: ["Foo", "Bar", "Baz"],
+      file: 'module Foo.Bar.Baz exposing (..)\n\nbar = "baz"'
+    }
+  ])
 })

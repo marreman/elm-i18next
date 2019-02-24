@@ -1,0 +1,14 @@
+{
+  "account": {
+    "email": "Email",
+    "error": "Something went wrong, try reloading the page."
+  },
+  "signup": {
+    "incognito_message": "This is a message",
+    "loading": "Loading",
+    "name_step": {
+      "label": "First name",
+      "title": "Enter your name"
+    }
+  }
+}
