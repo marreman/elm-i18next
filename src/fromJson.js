@@ -5,7 +5,7 @@ const fromJson = (o, moduleName) => {
   const module = [
     {
       name: moduleName,
-      functions: functionKeys.map(k => f(k, o[k]))
+      functions: functionKeys.map(k => createFunction(k, o[k]))
     }
   ]
 
@@ -16,7 +16,23 @@ const fromJson = (o, moduleName) => {
   return flatten([module, subModules])
 }
 
-const f = (name, body) => ({ name, body })
+const createFunction = (key, value) => {
+  const parts = value
+    .split(/({{[^{]*}})/)
+    .filter(Boolean)
+    .map(part => {
+      if (/{{[^{]*}}/.test(part)) {
+        return {
+          type: "variable",
+          value: part.replace(/{{(.*)}}/, (_, v) => v)
+        }
+      } else {
+        return { type: "string", value: part }
+      }
+    })
+
+  return { name: key, body: parts }
+}
 
 const isObject = a => !!a && a.constructor === Object
 

@@ -15,6 +15,14 @@ describe("toLowerCamelCase", () => {
   test("with uppercase chars", () => {
     expect(toLowerCamelCase("foo_bAr_baZ")).toEqual("fooBArBaZ")
   })
+
+  test("with dashes", () => {
+    expect(toLowerCamelCase("foo-bar-baz")).toEqual("fooBarBaz")
+  })
+
+  test("with slashes", () => {
+    expect(toLowerCamelCase("foo/bar/baz")).toEqual("fooBarBaz")
+  })
 })
 
 describe("toUpperCamelCase", () => {

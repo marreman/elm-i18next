@@ -16,7 +16,10 @@ test("parses flat tree", () => {
   const expected = [
     {
       name: ["ModuleName"],
-      functions: [{ name: "foo", body: "bar" }, { name: "bar", body: "baz" }]
+      functions: [
+        { name: "foo", body: [{ type: "string", value: "bar" }] },
+        { name: "bar", body: [{ type: "string", value: "baz" }] }
+      ]
     }
   ]
 
@@ -35,7 +38,7 @@ test("parses nested tree", () => {
     { name: ["ModuleName"], functions: [] },
     {
       name: ["ModuleName", "foo"],
-      functions: [{ name: "bar", body: "baz" }]
+      functions: [{ name: "bar", body: [{ type: "string", value: "baz" }] }]
     }
   ]
 
@@ -55,7 +58,60 @@ test("parses deeply nested tree", () => {
     { name: ["ModuleName", "baz"], functions: [] },
     {
       name: ["ModuleName", "baz", "foo"],
-      functions: [{ name: "bar", body: "baz" }]
+      functions: [{ name: "bar", body: [{ type: "string", value: "baz" }] }]
+    }
+  ]
+
+  expect(actual).toEqual(expected)
+})
+
+test("parses bodies with curly braces", () => {
+  const actual = fromJson(
+    {
+      foo: "bar {{someVar}}"
+    },
+    ["ModuleName"]
+  )
+
+  const expected = [
+    {
+      name: ["ModuleName"],
+      functions: [
+        {
+          name: "foo",
+          body: [
+            { type: "string", value: "bar " },
+            { type: "variable", value: "someVar" }
+          ]
+        }
+      ]
+    }
+  ]
+
+  expect(actual).toEqual(expected)
+})
+
+test("parses bodies with curly braces next to each other", () => {
+  const actual = fromJson(
+    {
+      foo: "{{bar}} {{ball}}"
+    },
+    ["ModuleName"]
+  )
+
+  const expected = [
+    {
+      name: ["ModuleName"],
+      functions: [
+        {
+          name: "foo",
+          body: [
+            { type: "variable", value: "bar" },
+            { type: "string", value: " " },
+            { type: "variable", value: "ball" }
+          ]
+        }
+      ]
     }
   ]
 
