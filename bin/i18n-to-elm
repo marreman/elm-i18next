@@ -9,9 +9,11 @@ program
   .version("0.1.0")
   .usage("[options] <file>")
   .arguments("<file>")
-  // .option("-f, --file <path>", "The JSON file to parse")
   .option("-m, --rootModuleName <name>", "The name of the root Elm module")
-  .option("-d, --rootDirectory <directory>", "The path to the directory where the generated code will be placed")
+  .option(
+    "-d, --rootDirectory <directory>",
+    "The path to the directory where the generated code will be placed"
+  )
   .parse(process.argv)
 
 const jsonFile = program.args[0]
@@ -21,7 +23,7 @@ if (!jsonFile || !fs.existsSync(jsonFile)) {
 }
 
 const json = require(path.resolve(jsonFile))
-const rootModuleName = program.rootModuleName || "Translations"
+const rootModuleName = program.rootModuleName || "Text"
 const rootDirectory = program.rootDirectory || process.cwd()
 
 main(json, rootModuleName, rootDirectory)
