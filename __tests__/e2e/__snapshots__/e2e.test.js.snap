@@ -10,6 +10,10 @@ email =
 
 error =
     \\"Something went wrong, try reloading the page.\\"
+
+
+text2hOfferMessage =
+    \\"Something that begins with a number\\"
 "
 `;
 

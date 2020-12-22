@@ -1,7 +1,8 @@
 {
   "account": {
     "email": "Email",
-    "error": "Something went wrong, try reloading the page."
+    "error": "Something went wrong, try reloading the page.",
+    "2hOfferMessage": "Something that begins with a number"
   },
   "signup": {
     "incognito_message": "This is a message",

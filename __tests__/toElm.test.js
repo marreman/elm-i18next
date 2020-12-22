@@ -9,11 +9,11 @@ test("array with one module", () => {
     toElm([
       {
         name: ["foo"],
-        functions: [{ name: "bar", body: [{ type: "string", value: "baz" }] }]
-      }
+        functions: [{ name: "bar", body: [{ type: "string", value: "baz" }] }],
+      },
     ])
   ).toEqual([
-    { path: ["Foo"], file: 'module Foo exposing (..)\n\nbar = "baz"' }
+    { path: ["Foo"], file: 'module Foo exposing (..)\n\nbar = "baz"' },
   ])
 })
 
@@ -24,15 +24,15 @@ test("multiple functions", () => {
         name: ["foo"],
         functions: [
           { name: "bar", body: [{ type: "string", value: "baz" }] },
-          { name: "baz", body: [{ type: "string", value: "boy" }] }
-        ]
-      }
+          { name: "baz", body: [{ type: "string", value: "boy" }] },
+        ],
+      },
     ])
   ).toEqual([
     {
       path: ["Foo"],
-      file: 'module Foo exposing (..)\n\nbar = "baz"\n\nbaz = "boy"'
-    }
+      file: 'module Foo exposing (..)\n\nbar = "baz"\n\nbaz = "boy"',
+    },
   ])
 })
 
@@ -41,16 +41,18 @@ test("array multiple modules", () => {
     toElm([
       {
         name: ["foo"],
-        functions: [{ name: "bar", body: [{ type: "string", value: "baz" }] }]
+        functions: [{ name: "bar", body: [{ type: "string", value: "baz" }] }],
       },
       {
         name: ["foo2"],
-        functions: [{ name: "bar2", body: [{ type: "string", value: "baz2" }] }]
-      }
+        functions: [
+          { name: "bar2", body: [{ type: "string", value: "baz2" }] },
+        ],
+      },
     ])
   ).toEqual([
     { path: ["Foo"], file: 'module Foo exposing (..)\n\nbar = "baz"' },
-    { path: ["Foo2"], file: 'module Foo2 exposing (..)\n\nbar2 = "baz2"' }
+    { path: ["Foo2"], file: 'module Foo2 exposing (..)\n\nbar2 = "baz2"' },
   ])
 })
 
@@ -59,14 +61,14 @@ test("complex module names", () => {
     toElm([
       {
         name: ["foo", "bar", "baz"],
-        functions: [{ name: "bar", body: [{ type: "string", value: "baz" }] }]
-      }
+        functions: [{ name: "bar", body: [{ type: "string", value: "baz" }] }],
+      },
     ])
   ).toEqual([
     {
       path: ["Foo", "Bar", "Baz"],
-      file: 'module Foo.Bar.Baz exposing (..)\n\nbar = "baz"'
-    }
+      file: 'module Foo.Bar.Baz exposing (..)\n\nbar = "baz"',
+    },
   ])
 })
 
@@ -80,17 +82,17 @@ test("with arguments", () => {
             name: "bar",
             body: [
               { type: "string", value: "baz" },
-              { type: "variable", value: "ball" }
-            ]
-          }
-        ]
-      }
+              { type: "variable", value: "ball" },
+            ],
+          },
+        ],
+      },
     ])
   ).toEqual([
     {
       path: ["Foo"],
-      file: 'module Foo exposing (..)\n\nbar ball = "baz" ++ ball'
-    }
+      file: 'module Foo exposing (..)\n\nbar ball = "baz" ++ ball',
+    },
   ])
 })
 
@@ -104,17 +106,17 @@ test("with arguments and spaces", () => {
             name: "bar",
             body: [
               { type: "string", value: "  baz  " },
-              { type: "variable", value: "ball" }
-            ]
-          }
-        ]
-      }
+              { type: "variable", value: "ball" },
+            ],
+          },
+        ],
+      },
     ])
   ).toEqual([
     {
       path: ["Foo"],
-      file: 'module Foo exposing (..)\n\nbar ball = "  baz  " ++ ball'
-    }
+      file: 'module Foo exposing (..)\n\nbar ball = "  baz  " ++ ball',
+    },
   ])
 })
 
@@ -131,17 +133,33 @@ test("with multiple arguments", () => {
               { type: "variable", value: "currentDate" },
               { type: "string", value: " and the current time is " },
               { type: "variable", value: "currentTime" },
-              { type: "string", value: "." }
-            ]
-          }
-        ]
-      }
+              { type: "string", value: "." },
+            ],
+          },
+        ],
+      },
     ])
   ).toEqual([
     {
       path: ["Foo"],
       file:
-        'module Foo exposing (..)\n\ncurrentTime currentDate currentTime = "The current date is " ++ currentDate ++ " and the current time is " ++ currentTime ++ "."'
-    }
+        'module Foo exposing (..)\n\ncurrentTime currentDate currentTime = "The current date is " ++ currentDate ++ " and the current time is " ++ currentTime ++ "."',
+    },
+  ])
+})
+
+test("with invalid beginning chars", () => {
+  expect(
+    toElm([
+      {
+        name: ["1foo"],
+        functions: [{ name: "2bar", body: [{ type: "string", value: "baz" }] }],
+      },
+    ])
+  ).toEqual([
+    {
+      path: ["Text1foo"],
+      file: 'module Text1foo exposing (..)\n\ntext2bar = "baz"',
+    },
   ])
 })
