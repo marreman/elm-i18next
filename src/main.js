@@ -7,7 +7,7 @@ const toElm = require("./toElm")
 const main = (json, rootModuleName, rootDirectory) => {
   const elmModules = toElm(fromJson(json, [rootModuleName]))
 
-  elmModules.forEach(m => {
+  elmModules.forEach((m) => {
     const partialPath = m.path
     const fileName = partialPath.pop()
     const fileDirectory = path.join(rootDirectory, ...partialPath)
@@ -16,7 +16,12 @@ const main = (json, rootModuleName, rootDirectory) => {
     fs.writeFileSync(path.join(fileDirectory, `${fileName}.elm`), m.file)
   })
 
-  execSync(`npx elm-format --elm-version=0.19 --yes ${path.join(rootDirectory, rootModuleName)}/`)
+  execSync(
+    `npx elm-format --elm-version=0.19 --yes ${path.join(
+      rootDirectory,
+      rootModuleName
+    )}/`
+  )
 }
 
 module.exports = main

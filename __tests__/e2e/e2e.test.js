@@ -6,7 +6,7 @@ const translations = require("./testTranslations.json")
 
 test("main", () => {
   const root = path.join(__dirname, "TestTranslations")
-  const file = name => readFileSync(path.join(root, name), "utf-8")
+  const file = (name) => readFileSync(path.join(root, name), "utf-8")
 
   // clean up
   rimraf.sync(root)

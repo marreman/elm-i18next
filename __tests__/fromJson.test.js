@@ -8,7 +8,7 @@ test("parses flat tree", () => {
   const actual = fromJson(
     {
       foo: "bar",
-      bar: "baz"
+      bar: "baz",
     },
     ["ModuleName"]
   )
@@ -18,9 +18,9 @@ test("parses flat tree", () => {
       name: ["ModuleName"],
       functions: [
         { name: "foo", body: [{ type: "string", value: "bar" }] },
-        { name: "bar", body: [{ type: "string", value: "baz" }] }
-      ]
-    }
+        { name: "bar", body: [{ type: "string", value: "baz" }] },
+      ],
+    },
   ]
 
   expect(actual).toEqual(expected)
@@ -29,7 +29,7 @@ test("parses flat tree", () => {
 test("parses nested tree", () => {
   const actual = fromJson(
     {
-      foo: { bar: "baz" }
+      foo: { bar: "baz" },
     },
     ["ModuleName"]
   )
@@ -38,8 +38,8 @@ test("parses nested tree", () => {
     { name: ["ModuleName"], functions: [] },
     {
       name: ["ModuleName", "foo"],
-      functions: [{ name: "bar", body: [{ type: "string", value: "baz" }] }]
-    }
+      functions: [{ name: "bar", body: [{ type: "string", value: "baz" }] }],
+    },
   ]
 
   expect(actual).toEqual(expected)
@@ -48,7 +48,7 @@ test("parses nested tree", () => {
 test("parses deeply nested tree", () => {
   const actual = fromJson(
     {
-      baz: { foo: { bar: "baz" } }
+      baz: { foo: { bar: "baz" } },
     },
     ["ModuleName"]
   )
@@ -58,8 +58,8 @@ test("parses deeply nested tree", () => {
     { name: ["ModuleName", "baz"], functions: [] },
     {
       name: ["ModuleName", "baz", "foo"],
-      functions: [{ name: "bar", body: [{ type: "string", value: "baz" }] }]
-    }
+      functions: [{ name: "bar", body: [{ type: "string", value: "baz" }] }],
+    },
   ]
 
   expect(actual).toEqual(expected)
@@ -68,7 +68,7 @@ test("parses deeply nested tree", () => {
 test("parses bodies with curly braces", () => {
   const actual = fromJson(
     {
-      foo: "bar {{someVar}}"
+      foo: "bar {{someVar}}",
     },
     ["ModuleName"]
   )
@@ -81,11 +81,11 @@ test("parses bodies with curly braces", () => {
           name: "foo",
           body: [
             { type: "string", value: "bar " },
-            { type: "variable", value: "someVar" }
-          ]
-        }
-      ]
-    }
+            { type: "variable", value: "someVar" },
+          ],
+        },
+      ],
+    },
   ]
 
   expect(actual).toEqual(expected)
@@ -94,7 +94,7 @@ test("parses bodies with curly braces", () => {
 test("parses bodies with curly braces next to each other", () => {
   const actual = fromJson(
     {
-      foo: "{{bar}} {{ball}}"
+      foo: "{{bar}} {{ball}}",
     },
     ["ModuleName"]
   )
@@ -108,11 +108,11 @@ test("parses bodies with curly braces next to each other", () => {
           body: [
             { type: "variable", value: "bar" },
             { type: "string", value: " " },
-            { type: "variable", value: "ball" }
-          ]
-        }
-      ]
-    }
+            { type: "variable", value: "ball" },
+          ],
+        },
+      ],
+    },
   ]
 
   expect(actual).toEqual(expected)
