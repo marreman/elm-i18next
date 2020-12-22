@@ -1,11 +1,8 @@
 const { toLowerCamelCase, toUpperCamelCase } = require("../src/toCamelCase")
+
 describe("toLowerCamelCase", () => {
   test("simple", () => {
     expect(toLowerCamelCase("foo_bar")).toEqual("fooBar")
-  })
-
-  test("complex", () => {
-    expect(toLowerCamelCase("foo_bar_baz")).toEqual("fooBarBaz")
   })
 
   test("complex", () => {
@@ -28,10 +25,6 @@ describe("toLowerCamelCase", () => {
 describe("toUpperCamelCase", () => {
   test("simple", () => {
     expect(toUpperCamelCase("foo_bar")).toEqual("FooBar")
-  })
-
-  test("complex", () => {
-    expect(toUpperCamelCase("foo_bar_baz")).toEqual("FooBarBaz")
   })
 
   test("complex", () => {
