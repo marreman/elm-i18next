@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`main 1`] = `
-"module TestTranslations.Account exposing (email, error)
+"module TestTranslations.Account exposing (..)
 
 
 email =
@@ -14,7 +14,7 @@ error =
 `;
 
 exports[`main 2`] = `
-"module TestTranslations.Signup exposing (incognitoMessage, loading)
+"module TestTranslations.Signup exposing (..)
 
 
 incognitoMessage =
@@ -27,7 +27,7 @@ loading =
 `;
 
 exports[`main 3`] = `
-"module TestTranslations.Signup.NameStep exposing (label, title)
+"module TestTranslations.Signup.NameStep exposing (..)
 
 
 label =
