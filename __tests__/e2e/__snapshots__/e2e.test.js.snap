@@ -17,7 +17,7 @@ text2hOfferMessage =
 
 
 withParameters fromString parameters =
-    [ fromString \\"Something that has \\", parameters.parameter_with, fromString \\" with a number\\" ]
+    [ fromString \\"Something that has \\", parameters.parameterWith, fromString \\" with a number\\" ]
 "
 `;
 

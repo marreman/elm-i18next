@@ -132,9 +132,9 @@ test("with multiple arguments", () => {
             name: "current_time",
             body: [
               { type: "string", value: "The current date is " },
-              { type: "variable", value: "date" },
+              { type: "variable", value: "current_date" },
               { type: "string", value: " and the current time is " },
-              { type: "variable", value: "time" },
+              { type: "variable", value: "current_time" },
               { type: "string", value: "." },
             ],
           },
@@ -145,7 +145,7 @@ test("with multiple arguments", () => {
     {
       path: ["Foo"],
       file:
-        'module Foo exposing (..)\n\ncurrentTime fromString parameters = [ fromString "The current date is ", parameters.date, fromString " and the current time is ", parameters.time, fromString "." ]',
+        'module Foo exposing (..)\n\ncurrentTime fromString parameters = [ fromString "The current date is ", parameters.currentDate, fromString " and the current time is ", parameters.currentTime, fromString "." ]',
     },
   ])
 })

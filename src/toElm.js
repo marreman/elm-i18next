@@ -40,7 +40,7 @@ const toFunction = (definition) => {
       if (part.type === "string") {
         return `fromString "${part.value}"`
       } else if (part.type === "variable") {
-        return `parameters.${part.value}`
+        return `parameters.${toLowerCamelCase(toValidName(part.value))}`
       }
     })
     .join(", ")
