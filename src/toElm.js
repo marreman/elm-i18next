@@ -7,7 +7,9 @@ const toElm = (modules) =>
       path: toModuleName(m.name),
       file: [
         `module ${toModuleName(m.name).join(".")} exposing (..)`,
-        m.functions.map(toFunction).join("\n\n"),
+        m.functions
+          .map((f) => (f.body.length > 1 ? toFunction(f) : toStatic(f)))
+          .join("\n\n"),
       ].join("\n\n"),
     }))
 
@@ -25,22 +27,25 @@ const toValidName = (name) => {
 const toModuleName = (nameParts) =>
   nameParts.map(toValidName).map(toUpperCamelCase)
 
+const toStatic = (definition) => {
+  const name = toLowerCamelCase(toValidName(definition.name))
+  const body = definition.body.map((x) => x.value).join("")
+  return `${name} = "${body}"`
+}
+
 const toFunction = (definition) => {
   const name = toLowerCamelCase(toValidName(definition.name))
-  const args = definition.body
-    .filter((part) => part.type === "variable")
-    .map((part) => part.value)
   const body = definition.body
     .map((part) => {
       if (part.type === "string") {
-        return `"${part.value}"`
+        return `fromString "${part.value}"`
       } else if (part.type === "variable") {
-        return part.value
+        return `parameters.${part.value}`
       }
     })
-    .join(" ++ ")
+    .join(", ")
 
-  return `${[name].concat(args).join(" ")} = ${body}`
+  return `${name} fromString parameters = [ ${body} ]`
 }
 
 module.exports = toElm

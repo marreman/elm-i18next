@@ -91,7 +91,8 @@ test("with arguments", () => {
   ).toEqual([
     {
       path: ["Foo"],
-      file: 'module Foo exposing (..)\n\nbar ball = "baz" ++ ball',
+      file:
+        'module Foo exposing (..)\n\nbar fromString parameters = [ fromString "baz", parameters.ball ]',
     },
   ])
 })
@@ -115,7 +116,8 @@ test("with arguments and spaces", () => {
   ).toEqual([
     {
       path: ["Foo"],
-      file: 'module Foo exposing (..)\n\nbar ball = "  baz  " ++ ball',
+      file:
+        'module Foo exposing (..)\n\nbar fromString parameters = [ fromString "  baz  ", parameters.ball ]',
     },
   ])
 })
@@ -130,9 +132,9 @@ test("with multiple arguments", () => {
             name: "current_time",
             body: [
               { type: "string", value: "The current date is " },
-              { type: "variable", value: "currentDate" },
+              { type: "variable", value: "date" },
               { type: "string", value: " and the current time is " },
-              { type: "variable", value: "currentTime" },
+              { type: "variable", value: "time" },
               { type: "string", value: "." },
             ],
           },
@@ -143,7 +145,7 @@ test("with multiple arguments", () => {
     {
       path: ["Foo"],
       file:
-        'module Foo exposing (..)\n\ncurrentTime currentDate currentTime = "The current date is " ++ currentDate ++ " and the current time is " ++ currentTime ++ "."',
+        'module Foo exposing (..)\n\ncurrentTime fromString parameters = [ fromString "The current date is ", parameters.date, fromString " and the current time is ", parameters.time, fromString "." ]',
     },
   ])
 })
