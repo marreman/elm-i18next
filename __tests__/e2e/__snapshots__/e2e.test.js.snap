@@ -14,6 +14,10 @@ error =
 
 text2hOfferMessage =
     \\"Something that begins with a number\\"
+
+
+withParameters parameter_with =
+    \\"Something that has \\" ++ parameter_with ++ \\" with a number\\"
 "
 `;
 
