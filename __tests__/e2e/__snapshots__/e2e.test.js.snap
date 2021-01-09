@@ -16,6 +16,10 @@ text2hOfferMessage =
     \\"Something that begins with a number\\"
 
 
+textVATExcludedTitle =
+    \\"Something that begins with a number\\"
+
+
 withParameters fromString parameters =
     [ fromString \\"Something that has \\", parameters.parameterWith, fromString \\" with a number\\" ]
 "

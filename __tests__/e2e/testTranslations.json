@@ -3,6 +3,7 @@
     "email": "Email",
     "error": "Something went wrong, try reloading the page.",
     "2hOfferMessage": "Something that begins with a number",
+    "VATExcludedTitle": "Something that begins with a number",
     "with_parameters": "Something that has {{parameter_with}} with a number"
   },
   "signup": {

@@ -13,8 +13,8 @@ const toElm = (modules) =>
       ].join("\n\n"),
     }))
 
-const toValidName = (name) => {
-  if (/^[a-zA-Z]/.test(name)) {
+const createValidator = (regex) => (name) => {
+  if (regex.test(name)) {
     return name
   } else {
     console.info(
@@ -24,8 +24,11 @@ const toValidName = (name) => {
   }
 }
 
+const toValidName = createValidator(/^[a-z]/)
+const toValidModuleName = createValidator(/^[a-zA-Z]/)
+
 const toModuleName = (nameParts) =>
-  nameParts.map(toValidName).map(toUpperCamelCase)
+  nameParts.map(toValidModuleName).map(toUpperCamelCase)
 
 const toStatic = (definition) => {
   const name = toLowerCamelCase(toValidName(definition.name))
