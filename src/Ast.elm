@@ -7,12 +7,13 @@ import Parser as P exposing ((|.), (|=), Parser)
 
 
 type Ast
-    = Group (Dict String Ast)
-    | Value (List Text)
+    = Module (Dict String Ast)
+    | Function (List Part)
+    | Value String
 
 
-type Text
-    = Static String
+type Part
+    = Text String
     | Parameter String
 
 
@@ -24,22 +25,27 @@ decodeValue =
 decoder : Decoder Ast
 decoder =
     D.oneOf
-        [ D.dict (D.lazy (\_ -> decoder)) |> D.map Group
-        , D.string |> D.andThen parseText |> D.map Value
+        [ D.dict (D.lazy (\_ -> decoder)) |> D.map Module
+        , D.string |> D.andThen parseText |> D.map Function
+        , D.string |> D.map Value
         ]
 
 
-parseText : String -> Decoder (List Text)
+parseText : String -> Decoder (List Part)
 parseText string =
-    case P.run parser string of
-        Ok parameters ->
-            D.succeed parameters
+    if String.contains "{{" string then
+        case P.run parser string of
+            Ok parameters ->
+                D.succeed parameters
 
-        Err _ ->
-            D.fail "failed to parse parameters"
+            Err _ ->
+                D.fail "failed to parse parameters"
+
+    else
+        D.fail "not a function"
 
 
-parser : Parser (List Text)
+parser : Parser (List Part)
 parser =
     let
         step parts =
@@ -51,7 +57,7 @@ parser =
         static =
             P.chompUntilEndOr "{{"
                 |> P.getChompedString
-                |> P.map Static
+                |> P.map Text
 
         parameter =
             P.succeed (String.trim >> Parameter)
