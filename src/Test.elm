@@ -2,26 +2,12 @@ module Test exposing (..)
 
 -- import Elm
 
-import Ast
 import Json.Encode as E
+import TextKey
 
 
 test =
-    Ast.decodeValue json
-        |> Result.map (fold "Text" [])
-
-
-fold name acc ast =
-    case ast of
-        Ast.Module subAst ->
-            ( name, [] ) :: acc
-
-        _ ->
-            acc
-
-
-
--- |> Result.map Elm.fromAst
+    TextKey.decodeValue json
 
 
 json : E.Value
