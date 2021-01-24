@@ -1,20 +1,26 @@
 module Ast exposing (..)
 
 import Dict exposing (Dict)
-import Json.Decode as D exposing (Decoder)
+import Json.Decode as D
 import Parser as P exposing ((|.), (|=))
 
 
-
--- the-sett/elm-string-case
-
-
 type alias Ast =
-    Dict Path (Dict String String)
+    Dict Path (Dict String Text)
 
 
 type alias Path =
     List String
+
+
+type Text
+    = StaticText String
+    | ParameterizedText (List Phrase)
+
+
+type Phrase
+    = StaticPhrase String
+    | PhraseParameter String
 
 
 type Token
@@ -30,7 +36,7 @@ fromJson value =
 decode : Path -> D.Value -> Ast -> Ast
 decode name value ast =
     D.decodeValue decoder value
-        |> Result.map (partition >> combine name ast)
+        |> Result.map (partition >> Tuple.mapFirst (Dict.map parseText) >> combine name ast)
         |> Result.withDefault Dict.empty
 
 
@@ -38,8 +44,8 @@ decoder : D.Decoder (Dict String Token)
 decoder =
     D.dict <|
         D.oneOf
-            [ D.map String_ D.string
-            , D.map Value_ D.value
+            [ D.string |> D.map String_
+            , D.value |> D.map Value_
             ]
 
 
@@ -57,7 +63,7 @@ partition =
         ( Dict.empty, Dict.empty )
 
 
-combine : Path -> Ast -> ( Dict String String, Dict String D.Value ) -> Ast
+combine : Path -> Ast -> ( Dict String Text, Dict String D.Value ) -> Ast
 combine path ast ( strings, values ) =
     Dict.foldl
         (\name -> decode (name :: path))
@@ -69,27 +75,19 @@ combine path ast ( strings, values ) =
 -- PARSING
 
 
-type Part
-    = Text String
-    | Parameter String
-
-
-parseText : String -> Decoder (List Part)
-parseText string =
+parseText : String -> String -> Text
+parseText _ string =
     if String.contains "{{" string then
-        case P.run parser string of
-            Ok parameters ->
-                D.succeed parameters
-
-            Err _ ->
-                D.fail "failed to parse parameters"
+        P.run phraseParser string
+            |> Result.withDefault []
+            |> ParameterizedText
 
     else
-        D.fail "not a function"
+        StaticText string
 
 
-parser : P.Parser (List Part)
-parser =
+phraseParser : P.Parser (List Phrase)
+phraseParser =
     let
         step parts =
             P.oneOf
@@ -100,10 +98,10 @@ parser =
         static =
             P.chompUntilEndOr "{{"
                 |> P.getChompedString
-                |> P.map Text
+                |> P.map StaticPhrase
 
         parameter =
-            P.succeed (String.trim >> Parameter)
+            P.succeed (String.trim >> PhraseParameter)
                 |. P.symbol "{{"
                 |= (P.getChompedString <| P.chompUntil "}}")
                 |. P.symbol "}}"
