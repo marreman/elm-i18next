@@ -1,10 +1,10 @@
 module AstTests exposing (..)
 
 import Ast
-import Dict exposing (Dict)
-import Expect exposing (Expectation)
+import Dict
+import Expect
 import Json.Encode as E
-import Test exposing (Test, describe, test)
+import Test exposing (Test, test)
 
 
 
