@@ -8,6 +8,16 @@ import Json.Encode as E
 
 test =
     Ast.decodeValue json
+        |> Result.map (fold "Text" [])
+
+
+fold name acc ast =
+    case ast of
+        Ast.Module subAst ->
+            ( name, [] ) :: acc
+
+        _ ->
+            acc
 
 
 
