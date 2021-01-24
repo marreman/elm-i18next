@@ -2,33 +2,72 @@ module Ast exposing (..)
 
 import Dict exposing (Dict)
 import Json.Decode as D exposing (Decoder)
-import Json.Encode as E
-import Parser as P exposing ((|.), (|=), Parser)
+import Parser as P exposing ((|.), (|=))
 
 
-type Ast
-    = Module (Dict String Ast)
-    | Function (List Part)
-    | Value String
+type alias Ast =
+    Dict Path (Dict String String)
+
+
+type alias Path =
+    List String
+
+
+type Token
+    = String_ String
+    | Value_ D.Value
+
+
+fromJson : D.Value -> Ast
+fromJson value =
+    decode [ "Text" ] value Dict.empty
+
+
+decode : Path -> D.Value -> Ast -> Ast
+decode name value ast =
+    D.decodeValue decoder value
+        |> Result.map (partition >> combine name ast)
+        |> Result.withDefault Dict.empty
+
+
+decoder : D.Decoder (Dict String Token)
+decoder =
+    D.dict <|
+        D.oneOf
+            [ D.map String_ D.string
+            , D.map Value_ D.value
+            ]
+
+
+partition : Dict String Token -> ( Dict String String, Dict String D.Value )
+partition =
+    Dict.foldl
+        (\name token ( strings, values ) ->
+            case token of
+                String_ string ->
+                    ( Dict.insert name string strings, values )
+
+                Value_ value ->
+                    ( strings, Dict.insert name value values )
+        )
+        ( Dict.empty, Dict.empty )
+
+
+combine : Path -> Ast -> ( Dict String String, Dict String D.Value ) -> Ast
+combine path ast ( strings, values ) =
+    Dict.foldl
+        (\name -> decode (name :: path))
+        (Dict.insert path strings ast)
+        values
+
+
+
+-- PARSING
 
 
 type Part
     = Text String
     | Parameter String
-
-
-decodeValue : E.Value -> Result D.Error Ast
-decodeValue =
-    D.decodeValue decoder
-
-
-decoder : Decoder Ast
-decoder =
-    D.oneOf
-        [ D.dict (D.lazy (\_ -> decoder)) |> D.map Module
-        , D.string |> D.andThen parseText |> D.map Function
-        , D.string |> D.map Value
-        ]
 
 
 parseText : String -> Decoder (List Part)
@@ -45,7 +84,7 @@ parseText string =
         D.fail "not a function"
 
 
-parser : Parser (List Part)
+parser : P.Parser (List Part)
 parser =
     let
         step parts =
