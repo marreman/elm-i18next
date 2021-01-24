@@ -5,6 +5,10 @@ import Json.Decode as D exposing (Decoder)
 import Parser as P exposing ((|.), (|=))
 
 
+
+-- the-sett/elm-string-case
+
+
 type alias Ast =
     Dict Path (Dict String String)
 
