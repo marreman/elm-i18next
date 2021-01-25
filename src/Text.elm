@@ -1,6 +1,7 @@
 module Text exposing (..)
 
 import Dict exposing (Dict)
+import Dict.Extra exposing (mapKeys)
 import Json.Decode as D
 import Parser as P exposing ((|.), (|=))
 
@@ -31,7 +32,7 @@ fromJson value =
 decode : Path -> D.Value -> Dict Path Module -> Dict Path Module
 decode name value ast =
     D.decodeValue decoder value
-        |> Result.map (partition >> Tuple.mapFirst (Dict.map parseText) >> combine name ast)
+        |> Result.map (partition >> Tuple.mapFirst (Dict.map parseText) >> combine name ast >> mapKeys List.reverse)
         |> Result.withDefault Dict.empty
 
 

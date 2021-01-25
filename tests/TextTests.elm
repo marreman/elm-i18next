@@ -8,7 +8,6 @@ import Text
 
 
 
--- Reverse module paths
 -- Upper camel case module names (the-sett/elm-string-case)
 -- Lower camel case values and functions (the-sett/elm-string-case)
 
@@ -39,7 +38,7 @@ suite =
                                 [ ( "foo", [ Text.Static "bar" ] )
                                 ]
                           )
-                        , ( [ "date_formats", "temporality", "Text" ]
+                        , ( [ "Text", "temporality", "date_formats" ]
                           , Dict.fromList
                                 [ ( "year difference"
                                   , [ Text.Static "The difference between "
@@ -53,7 +52,7 @@ suite =
                                   )
                                 ]
                           )
-                        , ( [ "temporality", "Text" ]
+                        , ( [ "Text", "temporality" ]
                           , Dict.fromList
                                 [ ( "current_date_and_time"
                                   , [ Text.Static "The date is "
