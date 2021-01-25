@@ -33,12 +33,12 @@ suite =
                 |> Text.fromJson
                 |> Expect.equal
                     (Dict.fromList
-                        [ ( [ "Text" ]
+                        [ ( []
                           , Dict.fromList
                                 [ ( "foo", [ Text.Static "bar" ] )
                                 ]
                           )
-                        , ( [ "Text", "temporality", "date_formats" ]
+                        , ( [ "temporality", "date_formats" ]
                           , Dict.fromList
                                 [ ( "year difference"
                                   , [ Text.Static "The difference between "
@@ -52,7 +52,7 @@ suite =
                                   )
                                 ]
                           )
-                        , ( [ "Text", "temporality" ]
+                        , ( [ "temporality" ]
                           , Dict.fromList
                                 [ ( "current_date_and_time"
                                   , [ Text.Static "The date is "

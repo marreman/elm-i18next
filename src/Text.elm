@@ -26,7 +26,7 @@ type Token
 
 fromJson : Json.Value -> Dict Path Module
 fromJson value =
-    run [ "Text" ] value Dict.empty
+    run [] value Dict.empty
 
 
 run : Path -> Json.Value -> Dict Path Module -> Dict Path Module
