@@ -2,8 +2,8 @@ module Text exposing (..)
 
 import Dict exposing (Dict)
 import Dict.Extra exposing (mapKeys)
-import Json.Decode as D
-import Parser as P exposing ((|.), (|=))
+import Json.Decode as Json
+import Parser exposing ((|.), (|=))
 
 
 type alias Path =
@@ -21,80 +21,78 @@ type Text
 
 type Token
     = String_ String
-    | Value_ D.Value
+    | Value_ Json.Value
 
 
-fromJson : D.Value -> Dict Path Module
+fromJson : Json.Value -> Dict Path Module
 fromJson value =
-    decode [ "Text" ] value Dict.empty
+    run [ "Text" ] value Dict.empty
 
 
-decode : Path -> D.Value -> Dict Path Module -> Dict Path Module
-decode name value ast =
-    D.decodeValue decoder value
-        |> Result.map (partition >> Tuple.mapFirst (Dict.map parseText) >> combine name ast >> mapKeys List.reverse)
+run : Path -> Json.Value -> Dict Path Module -> Dict Path Module
+run name value modules =
+    decodeTokens value
+        |> groupStringsAndValues
+        |> Tuple.mapFirst (Dict.map parseString)
+        |> combineAndRecurse name modules
+        |> mapKeys List.reverse
+
+
+decodeTokens : Json.Value -> Dict String Token
+decodeTokens value =
+    let
+        tokenDecoder =
+            Json.dict <|
+                Json.oneOf
+                    [ Json.string |> Json.map String_
+                    , Json.value |> Json.map Value_
+                    ]
+    in
+    Json.decodeValue tokenDecoder value
         |> Result.withDefault Dict.empty
 
 
-decoder : D.Decoder (Dict String Token)
-decoder =
-    D.dict <|
-        D.oneOf
-            [ D.string |> D.map String_
-            , D.value |> D.map Value_
-            ]
-
-
-partition : Dict String Token -> ( Dict String String, Dict String D.Value )
-partition =
-    Dict.foldl
-        (\name token ( strings, values ) ->
+groupStringsAndValues : Dict String Token -> ( Dict String String, Dict String Json.Value )
+groupStringsAndValues =
+    let
+        group name token groups =
             case token of
                 String_ string ->
-                    ( Dict.insert name string strings, values )
+                    Tuple.mapFirst (Dict.insert name string) groups
 
                 Value_ value ->
-                    ( strings, Dict.insert name value values )
-        )
-        ( Dict.empty, Dict.empty )
+                    Tuple.mapSecond (Dict.insert name value) groups
+    in
+    Dict.foldl group ( Dict.empty, Dict.empty )
 
 
-combine : Path -> Dict Path Module -> ( Module, Dict String D.Value ) -> Dict Path Module
-combine path ast ( strings, values ) =
-    Dict.foldl
-        (\name -> decode (name :: path))
-        (Dict.insert path strings ast)
-        values
-
-
-
--- PARSING
-
-
-parseText : String -> String -> List Text
-parseText _ string =
-    P.run phraseParser string
-        |> Result.withDefault []
-
-
-phraseParser : P.Parser (List Text)
-phraseParser =
+parseString : String -> String -> List Text
+parseString _ string =
     let
         step parts =
-            P.oneOf
-                [ P.end |> P.map (\_ -> P.Done (List.reverse parts))
-                , P.oneOf [ parameter, static ] |> P.map (\part -> P.Loop (part :: parts))
+            Parser.oneOf
+                [ Parser.end |> Parser.map (\_ -> Parser.Done (List.reverse parts))
+                , Parser.oneOf [ parameter, static ] |> Parser.map (\part -> Parser.Loop (part :: parts))
                 ]
 
         static =
-            P.chompUntilEndOr "{{"
-                |> P.getChompedString
-                |> P.map Static
+            Parser.chompUntilEndOr "{{"
+                |> Parser.getChompedString
+                |> Parser.map Static
 
         parameter =
-            P.succeed (String.trim >> Parameter)
-                |. P.symbol "{{"
-                |= (P.getChompedString <| P.chompUntil "}}")
-                |. P.symbol "}}"
+            Parser.succeed (String.trim >> Parameter)
+                |. Parser.symbol "{{"
+                |= (Parser.getChompedString <| Parser.chompUntil "}}")
+                |. Parser.symbol "}}"
     in
-    P.loop [] step
+    Parser.run (Parser.loop [] step) string
+        |> Result.withDefault []
+
+
+combineAndRecurse : Path -> Dict Path Module -> ( Module, Dict String Json.Value ) -> Dict Path Module
+combineAndRecurse path modules ( strings, values ) =
+    Dict.foldl
+        (\name -> run (name :: path))
+        (Dict.insert path strings modules)
+        values
