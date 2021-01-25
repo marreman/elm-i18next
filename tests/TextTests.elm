@@ -1,10 +1,10 @@
-module AstTests exposing (..)
+module TextTests exposing (..)
 
-import Ast exposing (Phrase(..))
 import Dict
 import Expect
 import Json.Encode as E
 import Test exposing (Test, test)
+import Text
 
 
 
@@ -15,7 +15,7 @@ import Test exposing (Test, test)
 
 suite : Test
 suite =
-    test "Ast.fromJson" <|
+    test "Text.fromJson" <|
         \_ ->
             E.object
                 [ ( "foo", E.string "bar" )
@@ -31,45 +31,42 @@ suite =
                         ]
                   )
                 ]
-                |> Ast.fromJson
+                |> Text.fromJson
                 |> Expect.equal
                     (Dict.fromList
                         [ ( [ "Text" ]
                           , Dict.fromList
-                                [ ( "foo", Ast.StaticText "bar" )
+                                [ ( "foo", [ Text.Static "bar" ] )
                                 ]
                           )
                         , ( [ "date_formats", "temporality", "Text" ]
                           , Dict.fromList
                                 [ ( "year difference"
-                                  , Ast.ParameterizedText
-                                        [ Ast.StaticPhrase "The difference between "
-                                        , Ast.PhraseParameter "first_year"
-                                        , Ast.StaticPhrase " and "
-                                        , Ast.PhraseParameter "second_year"
-                                        , Ast.StaticPhrase " is "
-                                        , Ast.PhraseParameter "year_difference"
-                                        , Ast.StaticPhrase "."
-                                        ]
+                                  , [ Text.Static "The difference between "
+                                    , Text.Parameter "first_year"
+                                    , Text.Static " and "
+                                    , Text.Parameter "second_year"
+                                    , Text.Static " is "
+                                    , Text.Parameter "year_difference"
+                                    , Text.Static "."
+                                    ]
                                   )
                                 ]
                           )
                         , ( [ "temporality", "Text" ]
                           , Dict.fromList
                                 [ ( "current_date_and_time"
-                                  , Ast.ParameterizedText
-                                        [ Ast.StaticPhrase "The date is "
-                                        , Ast.PhraseParameter "date"
-                                        , Ast.StaticPhrase " and the time is "
-                                        , Ast.PhraseParameter "time"
-                                        ]
+                                  , [ Text.Static "The date is "
+                                    , Text.Parameter "date"
+                                    , Text.Static " and the time is "
+                                    , Text.Parameter "time"
+                                    ]
                                   )
                                 , ( "current_time"
-                                  , Ast.ParameterizedText
-                                        [ Ast.StaticPhrase "The time is "
-                                        , Ast.PhraseParameter "time"
-                                        , Ast.StaticPhrase " now."
-                                        ]
+                                  , [ Text.Static "The time is "
+                                    , Text.Parameter "time"
+                                    , Text.Static " now."
+                                    ]
                                   )
                                 ]
                           )

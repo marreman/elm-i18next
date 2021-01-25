@@ -1,26 +1,21 @@
-module Ast exposing (..)
+module Text exposing (..)
 
 import Dict exposing (Dict)
 import Json.Decode as D
 import Parser as P exposing ((|.), (|=))
 
 
-type alias Ast =
-    Dict Path (Dict String Text)
-
-
 type alias Path =
     List String
 
 
+type alias Module =
+    Dict String (List Text)
+
+
 type Text
-    = StaticText String
-    | ParameterizedText (List Phrase)
-
-
-type Phrase
-    = StaticPhrase String
-    | PhraseParameter String
+    = Static String
+    | Parameter String
 
 
 type Token
@@ -28,12 +23,12 @@ type Token
     | Value_ D.Value
 
 
-fromJson : D.Value -> Ast
+fromJson : D.Value -> Dict Path Module
 fromJson value =
     decode [ "Text" ] value Dict.empty
 
 
-decode : Path -> D.Value -> Ast -> Ast
+decode : Path -> D.Value -> Dict Path Module -> Dict Path Module
 decode name value ast =
     D.decodeValue decoder value
         |> Result.map (partition >> Tuple.mapFirst (Dict.map parseText) >> combine name ast)
@@ -63,7 +58,7 @@ partition =
         ( Dict.empty, Dict.empty )
 
 
-combine : Path -> Ast -> ( Dict String Text, Dict String D.Value ) -> Ast
+combine : Path -> Dict Path Module -> ( Module, Dict String D.Value ) -> Dict Path Module
 combine path ast ( strings, values ) =
     Dict.foldl
         (\name -> decode (name :: path))
@@ -75,18 +70,13 @@ combine path ast ( strings, values ) =
 -- PARSING
 
 
-parseText : String -> String -> Text
+parseText : String -> String -> List Text
 parseText _ string =
-    if String.contains "{{" string then
-        P.run phraseParser string
-            |> Result.withDefault []
-            |> ParameterizedText
-
-    else
-        StaticText string
+    P.run phraseParser string
+        |> Result.withDefault []
 
 
-phraseParser : P.Parser (List Phrase)
+phraseParser : P.Parser (List Text)
 phraseParser =
     let
         step parts =
@@ -98,10 +88,10 @@ phraseParser =
         static =
             P.chompUntilEndOr "{{"
                 |> P.getChompedString
-                |> P.map StaticPhrase
+                |> P.map Static
 
         parameter =
-            P.succeed (String.trim >> PhraseParameter)
+            P.succeed (String.trim >> Parameter)
                 |. P.symbol "{{"
                 |= (P.getChompedString <| P.chompUntil "}}")
                 |. P.symbol "}}"
