@@ -80,14 +80,14 @@ module2 =
     """module Text.Temporality exposing (..)
 
 
-currentTime : (String -> a) -> { time : a } -> List a
-currentTime fromString parameters =
-    [ fromString "The time is ", parameters.time, fromString " now." ]
-
-
 currentDateAndTime : (String -> a) -> { date : a, time : a } -> List a
 currentDateAndTime fromString parameters =
     [ fromString "The date is ", parameters.date, fromString " and the time is ", parameters.time ]
+
+
+currentTime : (String -> a) -> { time : a } -> List a
+currentTime fromString parameters =
+    [ fromString "The time is ", parameters.time, fromString " now." ]
 """
 
 

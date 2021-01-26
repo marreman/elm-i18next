@@ -14,6 +14,7 @@
             "elm/parser": "1.1.0",
             "elm-community/dict-extra": "2.4.0",
             "elm-community/list-extra": "8.2.4",
+            "pd-andy/tuple-extra": "1.0.1",
             "the-sett/elm-string-case": "1.0.2",
             "the-sett/elm-syntax-dsl": "5.2.0"
         },

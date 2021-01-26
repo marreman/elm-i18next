@@ -3,13 +3,10 @@ module Elm exposing (..)
 import Dict exposing (Dict)
 import Elm.CodeGen exposing (..)
 import Elm.Pretty
-import List.Extra
-import String.Case
+import List.Extra as List
+import String.Case as String exposing (toCamelCaseLower, toCamelCaseUpper)
 import Text exposing (Text)
-
-
-
--- Sort functions and values alphabetically
+import Tuple.Extra as Tuple
 
 
 type alias File =
@@ -25,20 +22,25 @@ fromText =
 
 
 makeFile : Text.Path -> Text.Module -> File
-makeFile path mod =
+makeFile path module_ =
     let
         path_ =
-            "Text" :: path |> List.map String.Case.toCamelCaseUpper
+            "Text" :: path |> List.map String.toCamelCaseUpper
     in
-    { name = List.Extra.last path_ |> Maybe.withDefault "" -- TODO: improve this
+    { name = List.last path_ |> Maybe.withDefault "" -- TODO: improve this
     , path = path_
     , content =
-        file (normalModule path_ [])
-            []
-            (Dict.foldl (\name text d -> makeDeclaration (String.Case.toCamelCaseLower name) text :: d) [] mod)
-            Nothing
+        Dict.toList module_
+            |> List.sortBy Tuple.first
+            |> List.map (Tuple.mapFirst String.toCamelCaseLower >> Tuple.apply makeDeclaration)
+            |> makeModule path_
             |> Elm.Pretty.pretty 120
     }
+
+
+makeModule : Text.Path -> List Declaration -> Elm.CodeGen.File
+makeModule path declarations =
+    file (normalModule path []) [] declarations Nothing
 
 
 makeDeclaration : String -> List Text -> Declaration
