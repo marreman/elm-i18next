@@ -51,4 +51,52 @@ suite =
                 ]
                 |> Elm.fromText
                 |> Expect.equal
-                    []
+                    [ { content = module1, name = "name", path = [ "Text", "temporality", "date_formats" ] }
+                    , { content = module2, name = "name", path = [ "Text", "temporality" ] }
+                    , { content = module3, name = "name", path = [ "Text" ] }
+                    ]
+
+
+module1 : String
+module1 =
+    """module Text.temporality.date_formats exposing (..)
+
+
+year difference : (String -> a) -> { first_year : a, second_year : a, year_difference : a } -> List a
+year difference fromString parameters =
+    [ fromString "The difference between "
+    , parameters.first_year
+    , fromString " and "
+    , parameters.second_year
+    , fromString " is "
+    , parameters.year_difference
+    , fromString "."
+    ]
+"""
+
+
+module2 : String
+module2 =
+    """module Text.temporality exposing (..)
+
+
+current_time : (String -> a) -> { time : a } -> List a
+current_time fromString parameters =
+    [ fromString "The time is ", parameters.time, fromString " now." ]
+
+
+current_date_and_time : (String -> a) -> { date : a, time : a } -> List a
+current_date_and_time fromString parameters =
+    [ fromString "The date is ", parameters.date, fromString " and the time is ", parameters.time ]
+"""
+
+
+module3 : String
+module3 =
+    """module Text exposing (..)
+
+
+foo : String
+foo =
+    "bar"
+"""

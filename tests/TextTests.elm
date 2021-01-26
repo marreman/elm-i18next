@@ -7,11 +7,6 @@ import Test exposing (Test, test)
 import Text
 
 
-
--- Upper camel case module names (the-sett/elm-string-case)
--- Lower camel case values and functions (the-sett/elm-string-case)
-
-
 suite : Test
 suite =
     test "Text.fromJson" <|

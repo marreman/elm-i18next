@@ -6,6 +6,13 @@ import Elm.Pretty
 import Text exposing (Text)
 
 
+
+-- Set the corrent name of each module
+-- Upper camel case module names (the-sett/elm-string-case)
+-- Lower camel case values and functions (the-sett/elm-string-case)
+-- Sort functions and values alphabetically
+
+
 type alias File =
     { name : String
     , path : List String
@@ -31,7 +38,7 @@ makeFile path mod =
             []
             (Dict.foldl (\name text d -> makeDeclaration name text :: d) [] mod)
             Nothing
-            |> Elm.Pretty.pretty 80
+            |> Elm.Pretty.pretty 120
     }
 
 
@@ -78,30 +85,3 @@ makeDeclaration name texts =
                         )
                         texts_
                 )
-
-
-
--- makeModule : String -> Text.Module -> Module
--- makeModule name module_ =
--- ("module " ++ name ++ " exposing (..)")
---     :: List.map toValue (Dict.toList values)
---     |> String.join "\n\n"
--- makeFunction : String -> List Ast.Part -> String
--- makeFunction name parts =
---     let
---         body =
---             List.foldl
---                 (\part bodySoFar ->
---                     case part of
---                         Ast.Text string ->
---                             ("fromString \"" ++ string ++ "\"") :: bodySoFar
---                         Ast.Parameter parameterName ->
---                             ("parameters." ++ parameterName) :: bodySoFar
---                 )
---                 []
---                 parts
---     in
---     name ++ " fromString parameters = " ++ String.join " ++ " (List.reverse body)
--- makeValue : String -> String -> String
--- makeValue name body =
---     name ++ " = " ++ "\"" ++ body ++ "\""
