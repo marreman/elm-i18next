@@ -4,7 +4,7 @@ import Dict exposing (Dict)
 import Elm.CodeGen exposing (..)
 import Elm.Pretty
 import List.Extra as List
-import String.Case as String exposing (toCamelCaseLower, toCamelCaseUpper)
+import String.Case as String
 import Text exposing (Text)
 import Tuple.Extra as Tuple
 
