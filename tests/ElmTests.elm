@@ -51,19 +51,19 @@ suite =
                 ]
                 |> Elm.fromText
                 |> Expect.equal
-                    [ { content = module1, name = "name", path = [ "Text", "temporality", "date_formats" ] }
-                    , { content = module2, name = "name", path = [ "Text", "temporality" ] }
-                    , { content = module3, name = "name", path = [ "Text" ] }
+                    [ { content = module1, name = "DateFormats", path = [ "Text", "Temporality", "DateFormats" ] }
+                    , { content = module2, name = "Temporality", path = [ "Text", "Temporality" ] }
+                    , { content = module3, name = "Text", path = [ "Text" ] }
                     ]
 
 
 module1 : String
 module1 =
-    """module Text.temporality.date_formats exposing (..)
+    """module Text.Temporality.DateFormats exposing (..)
 
 
-year difference : (String -> a) -> { first_year : a, second_year : a, year_difference : a } -> List a
-year difference fromString parameters =
+yearDifference : (String -> a) -> { first_year : a, second_year : a, year_difference : a } -> List a
+yearDifference fromString parameters =
     [ fromString "The difference between "
     , parameters.first_year
     , fromString " and "
@@ -77,16 +77,16 @@ year difference fromString parameters =
 
 module2 : String
 module2 =
-    """module Text.temporality exposing (..)
+    """module Text.Temporality exposing (..)
 
 
-current_time : (String -> a) -> { time : a } -> List a
-current_time fromString parameters =
+currentTime : (String -> a) -> { time : a } -> List a
+currentTime fromString parameters =
     [ fromString "The time is ", parameters.time, fromString " now." ]
 
 
-current_date_and_time : (String -> a) -> { date : a, time : a } -> List a
-current_date_and_time fromString parameters =
+currentDateAndTime : (String -> a) -> { date : a, time : a } -> List a
+currentDateAndTime fromString parameters =
     [ fromString "The date is ", parameters.date, fromString " and the time is ", parameters.time ]
 """
 

@@ -3,13 +3,12 @@ module Elm exposing (..)
 import Dict exposing (Dict)
 import Elm.CodeGen exposing (..)
 import Elm.Pretty
+import List.Extra
+import String.Case
 import Text exposing (Text)
 
 
 
--- Set the corrent name of each module
--- Upper camel case module names (the-sett/elm-string-case)
--- Lower camel case values and functions (the-sett/elm-string-case)
 -- Sort functions and values alphabetically
 
 
@@ -29,14 +28,14 @@ makeFile : Text.Path -> Text.Module -> File
 makeFile path mod =
     let
         path_ =
-            "Text" :: path
+            "Text" :: path |> List.map String.Case.toCamelCaseUpper
     in
-    { name = "name"
+    { name = List.Extra.last path_ |> Maybe.withDefault "" -- TODO: improve this
     , path = path_
     , content =
         file (normalModule path_ [])
             []
-            (Dict.foldl (\name text d -> makeDeclaration name text :: d) [] mod)
+            (Dict.foldl (\name text d -> makeDeclaration (String.Case.toCamelCaseLower name) text :: d) [] mod)
             Nothing
             |> Elm.Pretty.pretty 120
     }
