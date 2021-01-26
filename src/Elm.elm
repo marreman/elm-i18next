@@ -50,39 +50,47 @@ makeDeclaration name texts =
             valDecl Nothing (Just stringAnn) name (string s)
 
         texts_ ->
-            funDecl
-                Nothing
-                (Just
-                    (funAnn (funAnn stringAnn (typeVar "a"))
-                        (funAnn
-                            (recordAnn
-                                (List.filterMap
-                                    (\text ->
-                                        case text of
-                                            Text.Parameter p ->
-                                                Just ( p, typeVar "a" )
+            makeFunction name texts_
 
-                                            Text.Static _ ->
-                                                Nothing
-                                    )
-                                    texts_
-                                )
-                            )
-                            (listAnn (typeVar "a"))
-                        )
+
+makeFunction : String -> List Text -> Declaration
+makeFunction name texts =
+    let
+        firstArg =
+            funAnn stringAnn (typeVar "a")
+
+        secondArg =
+            recordAnn <|
+                List.filterMap
+                    (\text ->
+                        case text of
+                            Text.Parameter p ->
+                                Just ( p, typeVar "a" )
+
+                            Text.Static _ ->
+                                Nothing
                     )
-                )
-                name
-                [ varPattern "fromString", varPattern "parameters" ]
-                (list <|
-                    List.map
-                        (\text ->
-                            case text of
-                                Text.Static s ->
-                                    construct "fromString" [ string s ]
+                    texts
 
-                                Text.Parameter p ->
-                                    val ("parameters." ++ p)
-                        )
-                        texts_
-                )
+        returnArg =
+            listAnn (typeVar "a")
+
+        body =
+            list <|
+                List.map
+                    (\text ->
+                        case text of
+                            Text.Static s ->
+                                construct "fromString" [ string s ]
+
+                            Text.Parameter p ->
+                                val ("parameters." ++ p)
+                    )
+                    texts
+    in
+    funDecl
+        Nothing
+        (Just (funAnn firstArg (funAnn secondArg returnArg)))
+        name
+        [ varPattern "fromString", varPattern "parameters" ]
+        body
