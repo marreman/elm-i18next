@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+cat helloWorld.json | ../../bin/i18n-to-elm
