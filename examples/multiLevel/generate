@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+cat multiLevel.json | ../../bin/i18n-to-elm --outputDirectory=.
