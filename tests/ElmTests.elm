@@ -51,9 +51,9 @@ suite =
                 ]
                 |> Elm.fromText "Text"
                 |> Expect.equal
-                    [ { content = module1, name = "DateFormats", path = [ "Text", "Temporality", "DateFormats" ] }
-                    , { content = module2, name = "Temporality", path = [ "Text", "Temporality" ] }
-                    , { content = module3, name = "Text", path = [ "Text" ] }
+                    [ { content = module1, path = [ "Text", "Temporality", "DateFormats" ] }
+                    , { content = module2, path = [ "Text", "Temporality" ] }
+                    , { content = module3, path = [ "Text" ] }
                     ]
 
 
