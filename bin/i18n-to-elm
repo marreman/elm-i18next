@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 const { execSync } = require("child_process")
-const fs = require("fs")
-const path = require("path")
+const { writeFileSync } = require("fs")
+const { join } = require("path")
 const { version } = require("../package.json")
 const { Program } = require("./program").Elm
 
@@ -16,12 +16,8 @@ const program = Program.init({
 })
 
 program.ports.writeFile.subscribe((file) => {
-  execSync(`mkdir -p ${path.join(...file.path.slice(0, file.path.length - 1))}`)
-  fs.writeFileSync(
-    path.join(...file.path) + ".elm",
-    file.content,
-    console.error
-  )
+  execSync(`mkdir -p ${join(...file.path.slice(0, file.path.length - 1))}`)
+  writeFileSync(join(...file.path) + ".elm", file.content, console.error)
 })
 
 program.ports.printAndExitFailure.subscribe((message) => {
