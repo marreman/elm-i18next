@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 const { execSync } = require("child_process")
-const { writeFileSync } = require("fs")
+const { writeFileSync, readFileSync } = require("fs")
 const { join } = require("path")
 const { version } = require("../package.json")
 const { Program } = require("./program").Elm
 
-const json = JSON.parse(fs.readFileSync(0, "utf-8")) // stdin
+const json = JSON.parse(readFileSync(0, "utf-8")) // stdin
 const program = Program.init({
   flags: {
     argv: process.argv,
