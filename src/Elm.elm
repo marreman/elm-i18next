@@ -10,8 +10,7 @@ import Tuple.Extra as Tuple
 
 
 type alias File =
-    { name : String
-    , path : List String
+    { path : List String
     , content : String
     }
 
@@ -22,13 +21,12 @@ fromText rootModule =
         preparePath path =
             List.map String.toCamelCaseUpper (rootModule :: path)
     in
-    Dict.foldl (\path mod files -> makeFile (preparePath path) mod :: files) []
+    Dict.foldl (\path module_ files -> makeFile (preparePath path) module_ :: files) []
 
 
 makeFile : Text.Path -> Text.Module -> File
 makeFile path module_ =
-    { name = List.last path |> Maybe.withDefault "" -- TODO: improve this
-    , path = path
+    { path = path
     , content =
         Dict.toList module_
             |> List.sortBy Tuple.first
