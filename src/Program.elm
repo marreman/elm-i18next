@@ -63,9 +63,6 @@ main =
 port writeFile : Elm.File -> Cmd msg
 
 
-port print : String -> Cmd msg
-
-
 port printAndExitFailure : String -> Cmd msg
 
 
