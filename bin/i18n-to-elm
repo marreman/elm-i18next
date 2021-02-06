@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+
+const fs = require("fs")
+const path = require("path")
+const { Program } = require("./program").Elm
+
+const json = { simpleKey: "simple value" }
+const { ports } = Program.init({
+  flags: {
+    argv: process.argv,
+    versionMessage: "1.0.0",
+    json,
+  },
+})
+
+ports.writeFile.subscribe((file) => {
+  fs.writeFile(path.join(...file.path) + ".elm", file.content, console.error)
+})
+
+// ports.print.subscribe((message) => {
+//   console.log(message)
+// })
+
+ports.printAndExitFailure.subscribe((message) => {
+  console.log(message)
+  process.exit(1)
+})
+
+ports.printAndExitSuccess.subscribe((message) => {
+  console.log(message)
+  process.exit(0)
+})

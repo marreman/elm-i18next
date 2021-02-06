@@ -1,9 +1,11 @@
-port module Main exposing (main)
+port module Program exposing (main)
 
 import Cli.Option as Option
 import Cli.OptionsParser as OptionsParser
 import Cli.Program as Program
-import Json.Decode as Decode exposing (Value)
+import Elm
+import Json.Decode exposing (Value)
+import Text
 
 
 type alias Options =
@@ -28,29 +30,23 @@ programConfig =
             )
 
 
-init : Flags -> Options -> Cmd Never
-init { json } options =
-    -- let
-    --     _ =
-    --         Debug.log "options" options
-    --     _ =
-    --         Debug.log "flags" flags
-    -- in
-    json
-        |> Decode.decodeValue (Decode.dict Decode.string)
-        |> Debug.toString
-        |> print
+init : FlagsIncludingArgv -> Options -> Cmd Never
+init flags options =
+    Text.fromJson flags.json
+        |> Elm.fromText
+        |> List.map writeFile
+        |> Cmd.batch
+
+
+type alias FlagsIncludingArgv =
+    Program.FlagsIncludingArgv Flags
 
 
 type alias Flags =
-    Program.FlagsIncludingArgv Input
-
-
-type alias Input =
     { json : Value }
 
 
-main : Program.StatelessProgram Never Input
+main : Program.StatelessProgram Never Flags
 main =
     Program.stateless
         { printAndExitFailure = printAndExitFailure
@@ -58,6 +54,9 @@ main =
         , init = init
         , config = programConfig
         }
+
+
+port writeFile : Elm.File -> Cmd msg
 
 
 port print : String -> Cmd msg
