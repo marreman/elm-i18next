@@ -9,8 +9,8 @@ import Text
 
 
 type alias Options =
-    { rootModuleName : String
-    , rootDirectory : String
+    { rootElmModule : String
+    , outputDirectory : String
     }
 
 
@@ -20,11 +20,11 @@ programConfig =
         |> Program.add
             (OptionsParser.build Options
                 |> OptionsParser.with
-                    (Option.optionalKeywordArg "rootModuleName"
-                        |> Option.map (Maybe.withDefault "Text")
+                    (Option.optionalKeywordArg "rootElmModule"
+                        |> Option.map (Maybe.withDefault "Text2")
                     )
                 |> OptionsParser.with
-                    (Option.optionalKeywordArg "rootDirectory"
+                    (Option.optionalKeywordArg "outputDirectory"
                         |> Option.map (Maybe.withDefault "./src")
                     )
             )
@@ -32,9 +32,13 @@ programConfig =
 
 init : FlagsIncludingArgv -> Options -> Cmd Never
 init flags options =
+    let
+        prependRootDirectory file =
+            { file | path = options.outputDirectory :: file.path }
+    in
     Text.fromJson flags.json
-        |> Elm.fromText
-        |> List.map writeFile
+        |> Elm.fromText options.rootElmModule
+        |> List.map (prependRootDirectory >> writeFile)
         |> Cmd.batch
 
 

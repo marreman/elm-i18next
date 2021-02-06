@@ -49,7 +49,7 @@ suite =
                         ]
                   )
                 ]
-                |> Elm.fromText
+                |> Elm.fromText "Text"
                 |> Expect.equal
                     [ { content = module1, name = "DateFormats", path = [ "Text", "Temporality", "DateFormats" ] }
                     , { content = module2, name = "Temporality", path = [ "Text", "Temporality" ] }

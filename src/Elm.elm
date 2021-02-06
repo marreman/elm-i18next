@@ -16,24 +16,24 @@ type alias File =
     }
 
 
-fromText : Dict Text.Path Text.Module -> List File
-fromText =
-    Dict.foldl (\path mod files -> makeFile path mod :: files) []
+fromText : String -> Dict Text.Path Text.Module -> List File
+fromText rootModule =
+    let
+        preparePath path =
+            List.map String.toCamelCaseUpper (rootModule :: path)
+    in
+    Dict.foldl (\path mod files -> makeFile (preparePath path) mod :: files) []
 
 
 makeFile : Text.Path -> Text.Module -> File
 makeFile path module_ =
-    let
-        path_ =
-            "Text" :: path |> List.map String.toCamelCaseUpper
-    in
-    { name = List.last path_ |> Maybe.withDefault "" -- TODO: improve this
-    , path = path_
+    { name = List.last path |> Maybe.withDefault "" -- TODO: improve this
+    , path = path
     , content =
         Dict.toList module_
             |> List.sortBy Tuple.first
             |> List.map (Tuple.mapFirst String.toCamelCaseLower >> Tuple.apply makeDeclaration)
-            |> makeModule path_
+            |> makeModule path
             |> Elm.Pretty.pretty 120
     }
 
