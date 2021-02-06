@@ -14,7 +14,11 @@ const { ports } = Program.init({
 })
 
 ports.writeFile.subscribe((file) => {
-  fs.writeFile(path.join(...file.path) + ".elm", file.content, console.error)
+  fs.writeFileSync(
+    path.join(...file.path) + ".elm",
+    file.content,
+    console.error
+  )
 })
 
 ports.printAndExitFailure.subscribe((message) => {
