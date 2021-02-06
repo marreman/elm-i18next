@@ -7,8 +7,40 @@ import Test exposing (Test, test)
 import Text
 
 
-suite : Test
-suite =
+multiLevel : Test
+multiLevel =
+    test "Multi level" <|
+        \_ ->
+            E.object
+                [ ( "a", E.string "a" )
+                , ( "b"
+                  , E.object
+                        [ ( "b", E.string "b" )
+                        , ( "c"
+                          , E.object
+                                [ ( "c", E.string "c" )
+                                , ( "d"
+                                  , E.object
+                                        [ ( "d", E.string "d" ) ]
+                                  )
+                                ]
+                          )
+                        ]
+                  )
+                ]
+                |> Text.fromJson
+                |> Expect.equal
+                    (Dict.fromList
+                        [ ( [], Dict.fromList [ ( "a", [ Text.Static "a" ] ) ] )
+                        , ( [ "b" ], Dict.fromList [ ( "b", [ Text.Static "b" ] ) ] )
+                        , ( [ "b", "c" ], Dict.fromList [ ( "c", [ Text.Static "c" ] ) ] )
+                        , ( [ "b", "c", "d" ], Dict.fromList [ ( "d", [ Text.Static "d" ] ) ] )
+                        ]
+                    )
+
+
+complex : Test
+complex =
     test "Text.fromJson" <|
         \_ ->
             E.object

@@ -35,7 +35,6 @@ run name value modules =
         |> groupStringsAndValues
         |> Tuple.mapFirst (Dict.map parseString)
         |> combineAndRecurse name modules
-        |> mapKeys List.reverse
 
 
 decodeTokens : Json.Value -> Dict String Token
@@ -94,5 +93,5 @@ combineAndRecurse : Path -> Dict Path Module -> ( Module, Dict String Json.Value
 combineAndRecurse path modules ( strings, values ) =
     Dict.foldl
         (\name -> run (name :: path))
-        (Dict.insert path strings modules)
+        (Dict.insert (List.reverse path) strings modules)
         values
