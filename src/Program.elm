@@ -33,12 +33,12 @@ programConfig =
 init : FlagsIncludingArgv -> Options -> Cmd Never
 init flags options =
     let
-        prependRootDirectory file =
+        prependOutputDirectory file =
             { file | path = options.outputDirectory :: file.path }
     in
     Text.fromJson flags.json
         |> Elm.fromText options.rootElmModule
-        |> List.map (prependRootDirectory >> writeFile)
+        |> List.map (prependOutputDirectory >> writeFile)
         |> Cmd.batch
 
 
