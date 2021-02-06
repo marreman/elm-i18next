@@ -2,18 +2,19 @@
 
 const fs = require("fs")
 const path = require("path")
+const { version } = require("../package.json")
 const { Program } = require("./program").Elm
 
 const json = { simpleKey: "simple value" }
-const { ports } = Program.init({
+const program = Program.init({
   flags: {
     argv: process.argv,
-    versionMessage: "1.0.0",
+    versionMessage: version,
     json,
   },
 })
 
-ports.writeFile.subscribe((file) => {
+program.ports.writeFile.subscribe((file) => {
   fs.writeFileSync(
     path.join(...file.path) + ".elm",
     file.content,
@@ -21,12 +22,12 @@ ports.writeFile.subscribe((file) => {
   )
 })
 
-ports.printAndExitFailure.subscribe((message) => {
+program.ports.printAndExitFailure.subscribe((message) => {
   console.log(message)
   process.exit(1)
 })
 
-ports.printAndExitSuccess.subscribe((message) => {
+program.ports.printAndExitSuccess.subscribe((message) => {
   console.log(message)
   process.exit(0)
 })
