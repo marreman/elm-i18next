@@ -21,7 +21,7 @@ programConfig =
             (OptionsParser.build Options
                 |> OptionsParser.with
                     (Option.optionalKeywordArg "rootElmModule"
-                        |> Option.map (Maybe.withDefault "Text2")
+                        |> Option.map (Maybe.withDefault "Text")
                     )
                 |> OptionsParser.with
                     (Option.optionalKeywordArg "outputDirectory"
