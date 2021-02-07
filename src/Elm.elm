@@ -45,28 +45,28 @@ makeModule path declarations =
 normalize : ( String, List Text ) -> ( String, List Text )
 normalize ( name, texts ) =
     let
-        camelCaseParameter text =
+        normalizeParameter text =
             case text of
                 Text.Parameter p ->
-                    Text.Parameter (String.toCamelCaseLower p)
+                    Text.Parameter (String.toCamelCaseLower (adaptName 'p' p))
 
                 Text.Static s ->
                     Text.Static s
     in
-    ( String.toCamelCaseLower (adaptName name), List.map camelCaseParameter texts )
+    ( String.toCamelCaseLower (adaptName 't' name), List.map normalizeParameter texts )
 
 
 {-| Adapts a name so that it becomes a legal Elm name by adding 't' in front if necessary.
 -}
-adaptName : String -> String
-adaptName name =
+adaptName : Char -> String -> String
+adaptName prefix name =
     let
         adapt char =
             if Char.isAlpha char then
                 String.fromChar char
 
             else
-                String.fromList [ 't', char ]
+                String.fromList [ prefix, char ]
     in
     case String.uncons name of
         Just ( char, rest ) ->

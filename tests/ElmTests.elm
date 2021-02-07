@@ -15,7 +15,7 @@ suite =
                 [ ( []
                   , Dict.fromList
                         [ ( "foo", [ Text.Static "bar" ] )
-                        , ( "1bad__key", [ Text.Static "baz" ] )
+                        , ( "1bad__key", [ Text.Static "with", Text.Parameter "1bad_param" ] )
                         ]
                   )
                 , ( [ "temporality", "date_formats" ]
@@ -97,9 +97,9 @@ module3 =
     """module Text exposing (..)
 
 
-t1badKey : String
-t1badKey =
-    "baz"
+t1badKey : (String -> a) -> { p1badParam : a } -> List a
+t1badKey fromString parameters =
+    [ fromString "with", parameters.p1badParam ]
 
 
 foo : String
