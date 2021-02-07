@@ -3,6 +3,7 @@ module Elm exposing (..)
 import Dict exposing (Dict)
 import Elm.CodeGen exposing (..)
 import Elm.Pretty
+import Html.Attributes exposing (name)
 import List.Extra as List
 import String.Case as String
 import Text exposing (Text)
@@ -44,10 +45,7 @@ makeModule path declarations =
 normalize : ( String, List Text ) -> ( String, List Text )
 normalize ( name, texts ) =
     let
-        normalizeName =
-            String.toCamelCaseLower
-
-        normalizeText text =
+        camelCaseParameter text =
             case text of
                 Text.Parameter p ->
                     Text.Parameter (String.toCamelCaseLower p)
@@ -55,7 +53,27 @@ normalize ( name, texts ) =
                 Text.Static s ->
                     Text.Static s
     in
-    ( normalizeName name, List.map normalizeText texts )
+    ( String.toCamelCaseLower (adaptName name), List.map camelCaseParameter texts )
+
+
+{-| Adapts a name so that it becomes a legal Elm name by adding 't' in front if necessary.
+-}
+adaptName : String -> String
+adaptName name =
+    let
+        adapt char =
+            if Char.isAlpha char then
+                String.fromChar char
+
+            else
+                String.fromList [ 't', char ]
+    in
+    case String.uncons name of
+        Just ( char, rest ) ->
+            adapt char ++ rest
+
+        Nothing ->
+            name
 
 
 makeDeclaration : ( String, List Text ) -> Declaration

@@ -15,6 +15,7 @@ suite =
                 [ ( []
                   , Dict.fromList
                         [ ( "foo", [ Text.Static "bar" ] )
+                        , ( "1bad__key", [ Text.Static "baz" ] )
                         ]
                   )
                 , ( [ "temporality", "date_formats" ]
@@ -94,6 +95,11 @@ currentTime fromString parameters =
 module3 : String
 module3 =
     """module Text exposing (..)
+
+
+t1badKey : String
+t1badKey =
+    "baz"
 
 
 foo : String
