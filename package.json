@@ -6,7 +6,8 @@
     "i18n-to-elm": "bin/i18n-to-elm"
   },
   "scripts": {
-    "build": "elm make src/Program.elm --output=bin/program.js --optimize"
+    "build": "elm make src/Program.elm --output=bin/program.js --optimize",
+    "generate-examples": "examples/helloWorld/generate && examples/multiLevel/generate"
   },
   "repository": {
     "type": "git",
