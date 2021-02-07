@@ -30,7 +30,7 @@ makeFile path module_ =
     , content =
         Dict.toList module_
             |> List.sortBy Tuple.first
-            |> List.map (Tuple.apply makeDeclaration)
+            |> List.map (normalize >> makeDeclaration)
             |> makeModule path
             |> Elm.Pretty.pretty 120
     }
@@ -41,10 +41,13 @@ makeModule path declarations =
     file (normalModule path []) [] declarations Nothing
 
 
-makeDeclaration : String -> List Text -> Declaration
-makeDeclaration name texts =
+normalize : ( String, List Text ) -> ( String, List Text )
+normalize ( name, texts ) =
     let
-        lowerCaseParameter text =
+        normalizeName =
+            String.toCamelCaseLower
+
+        normalizeText text =
             case text of
                 Text.Parameter p ->
                     Text.Parameter (String.toCamelCaseLower p)
@@ -52,12 +55,17 @@ makeDeclaration name texts =
                 Text.Static s ->
                     Text.Static s
     in
+    ( normalizeName name, List.map normalizeText texts )
+
+
+makeDeclaration : ( String, List Text ) -> Declaration
+makeDeclaration ( name, texts ) =
     case texts of
         (Text.Static s) :: [] ->
-            valDecl Nothing (Just stringAnn) (String.toCamelCaseLower name) (string s)
+            valDecl Nothing (Just stringAnn) name (string s)
 
         _ ->
-            makeFunction (String.toCamelCaseLower name) (List.map lowerCaseParameter texts)
+            makeFunction name texts
 
 
 makeFunction : String -> List Text -> Declaration
