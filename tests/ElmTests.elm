@@ -62,14 +62,14 @@ module1 =
     """module Text.Temporality.DateFormats exposing (..)
 
 
-yearDifference : (String -> a) -> { first_year : a, second_year : a, year_difference : a } -> List a
+yearDifference : (String -> a) -> { firstYear : a, secondYear : a, yearDifference : a } -> List a
 yearDifference fromString parameters =
     [ fromString "The difference between "
-    , parameters.first_year
+    , parameters.firstYear
     , fromString " and "
-    , parameters.second_year
+    , parameters.secondYear
     , fromString " is "
-    , parameters.year_difference
+    , parameters.yearDifference
     , fromString "."
     ]
 """
