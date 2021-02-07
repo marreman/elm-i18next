@@ -56,7 +56,7 @@ normalize ( name, texts ) =
     ( String.toCamelCaseLower (adaptName 't' name), List.map normalizeParameter texts )
 
 
-{-| Adapts a name so that it becomes a legal Elm name by adding 't' in front if necessary.
+{-| Adapts a name so that it becomes a legal Elm name by prefixing with a char if necessary.
 -}
 adaptName : Char -> String -> String
 adaptName prefix name =
