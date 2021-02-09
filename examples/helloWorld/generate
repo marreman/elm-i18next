@@ -2,4 +2,4 @@
 
 cd "$(dirname "$0")"
 
-cat helloWorld.json | ../../bin/i18n-to-elm
+cat helloWorld.json | ../../bin/elm-i18next

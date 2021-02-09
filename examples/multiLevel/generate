@@ -2,4 +2,4 @@
 
 cd "$(dirname "$0")"
 
-cat multiLevel.json | ../../bin/i18n-to-elm --outputDirectory=.
+cat multiLevel.json | ../../bin/elm-i18next --outputDirectory=.

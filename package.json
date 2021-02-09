@@ -1,9 +1,9 @@
 {
-  "name": "@marreman/i18n-to-elm",
+  "name": "@marreman/elm-i18next",
   "version": "1.0.0",
   "description": "Generate Elm modules from i18n translation JSON files.",
   "bin": {
-    "i18n-to-elm": "bin/i18n-to-elm"
+    "elm-i18next": "bin/elm-i18next"
   },
   "scripts": {
     "build": "elm make src/Program.elm --output=bin/program.js --optimize",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/marreman/i18n-to-elm.git"
+    "url": "git+https://github.com/marreman/elm-i18next.git"
   },
   "keywords": [
     "Elm",
@@ -22,11 +22,11 @@
   "author": "Martin Liberg <mr.liberg@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/marreman/i18n-to-elm/issues"
+    "url": "https://github.com/marreman/elm-i18next/issues"
   },
-  "homepage": "https://github.com/marreman/i18n-to-elm#readme",
+  "homepage": "https://github.com/marreman/elm-i18next#readme",
   "files": [
-    "bin/i18n-to-elm",
+    "bin/elm-i18next",
     "bin/program.js"
   ]
 }
