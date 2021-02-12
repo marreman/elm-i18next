@@ -5,7 +5,6 @@ import Elm.CodeGen exposing (..)
 import Elm.Pretty
 import Html.Attributes exposing (name)
 import List.Extra as List
-import Set
 import String.Case as String
 import Text exposing (Text)
 import Tuple.Extra as Tuple
@@ -104,8 +103,7 @@ makeFunction name texts =
                             Text.Static _ ->
                                 Nothing
                     )
-                |> Set.fromList
-                |> Set.toList
+                |> List.unique
                 |> List.map (\p -> ( p, typeVar "a" ))
                 |> recordAnn
 
