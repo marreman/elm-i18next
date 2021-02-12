@@ -5,6 +5,7 @@ import Elm.CodeGen exposing (..)
 import Elm.Pretty
 import Html.Attributes exposing (name)
 import List.Extra as List
+import Set
 import String.Case as String
 import Text exposing (Text)
 import Tuple.Extra as Tuple
@@ -93,17 +94,20 @@ makeFunction name texts =
             funAnn stringAnn (typeVar "a")
 
         secondArg =
-            recordAnn <|
-                List.filterMap
+            texts
+                |> List.filterMap
                     (\text ->
                         case text of
                             Text.Parameter p ->
-                                Just ( p, typeVar "a" )
+                                Just p
 
                             Text.Static _ ->
                                 Nothing
                     )
-                    texts
+                |> Set.fromList
+                |> Set.toList
+                |> List.map (\p -> ( p, typeVar "a" ))
+                |> recordAnn
 
         returnArg =
             listAnn (typeVar "a")

@@ -3877,6 +3877,16 @@ var $elm$core$List$filterMap = F2(
 			_List_Nil,
 			xs);
 	});
+var $elm$core$Set$Set_elm_builtin = $elm$core$Basics$identity;
+var $elm$core$Set$empty = $elm$core$Dict$empty;
+var $elm$core$Set$insert = F2(
+	function (key, _v0) {
+		var dict = _v0;
+		return A3($elm$core$Dict$insert, key, 0, dict);
+	});
+var $elm$core$Set$fromList = function (list) {
+	return A3($elm$core$List$foldl, $elm$core$Set$insert, $elm$core$Set$empty, list);
+};
 var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$FunctionTypeAnnotation = F2(
 	function (a, b) {
 		return {$: 6, a: a, b: b};
@@ -4045,19 +4055,25 @@ var $author$project$Elm$makeFunction = F2(
 	function (name, texts) {
 		var secondArg = $the_sett$elm_syntax_dsl$Elm$CodeGen$recordAnn(
 			A2(
-				$elm$core$List$filterMap,
-				function (text) {
-					if (text.$ === 1) {
-						var p = text.a;
-						return $elm$core$Maybe$Just(
-							_Utils_Tuple2(
-								p,
-								$the_sett$elm_syntax_dsl$Elm$CodeGen$typeVar('a')));
-					} else {
-						return $elm$core$Maybe$Nothing;
-					}
+				$elm$core$List$map,
+				function (p) {
+					return _Utils_Tuple2(
+						p,
+						$the_sett$elm_syntax_dsl$Elm$CodeGen$typeVar('a'));
 				},
-				texts));
+				$elm$core$Set$toList(
+					$elm$core$Set$fromList(
+						A2(
+							$elm$core$List$filterMap,
+							function (text) {
+								if (text.$ === 1) {
+									var p = text.a;
+									return $elm$core$Maybe$Just(p);
+								} else {
+									return $elm$core$Maybe$Nothing;
+								}
+							},
+							texts)))));
 		var returnArg = $the_sett$elm_syntax_dsl$Elm$CodeGen$listAnn(
 			$the_sett$elm_syntax_dsl$Elm$CodeGen$typeVar('a'));
 		var firstArg = A2(
@@ -8793,13 +8809,6 @@ var $dillonkearns$elm_cli_options_parser$Cli$UsageSpec$name = function (usageSpe
 			return restArgsDescription;
 	}
 };
-var $elm$core$Set$Set_elm_builtin = $elm$core$Basics$identity;
-var $elm$core$Set$empty = $elm$core$Dict$empty;
-var $elm$core$Set$insert = F2(
-	function (key, _v0) {
-		var dict = _v0;
-		return A3($elm$core$Dict$insert, key, 0, dict);
-	});
 var $elm$core$Dict$get = F2(
 	function (targetKey, dict) {
 		get:
@@ -8953,9 +8962,6 @@ var $dillonkearns$elm_cli_options_parser$Cli$LowLevel$UserParser = function (a) 
 };
 var $dillonkearns$elm_cli_options_parser$Cli$LowLevel$ValidationErrors = function (a) {
 	return {$: 0, a: a};
-};
-var $elm$core$Set$fromList = function (list) {
-	return A3($elm$core$List$foldl, $elm$core$Set$insert, $elm$core$Set$empty, list);
 };
 var $dillonkearns$elm_cli_options_parser$Cli$LowLevel$ShowHelp = {$: 3};
 var $dillonkearns$elm_cli_options_parser$Tokenizer$Flag = {$: 0};

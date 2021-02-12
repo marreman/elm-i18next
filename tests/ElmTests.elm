@@ -16,6 +16,7 @@ suite =
                   , Dict.fromList
                         [ ( "foo", [ Text.Static "bar" ] )
                         , ( "1bad__key", [ Text.Static "with", Text.Parameter "1bad_param" ] )
+                        , ( "repeated_param", [ Text.Parameter "foo", Text.Static ", I repeat, ", Text.Parameter "foo" ] )
                         ]
                   )
                 , ( [ "temporality", "date_formats" ]
@@ -105,4 +106,9 @@ t1badKey fromString parameters =
 foo : String
 foo =
     "bar"
+
+
+repeatedParam : (String -> a) -> { foo : a } -> List a
+repeatedParam fromString parameters =
+    [ parameters.foo, fromString ", I repeat, ", parameters.foo ]
 """
