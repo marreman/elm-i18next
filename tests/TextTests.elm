@@ -3,6 +3,7 @@ module TextTests exposing (..)
 import Dict exposing (Dict)
 import Expect
 import Fuzz exposing (Fuzzer)
+import Html exposing (text)
 import Json.Encode as E
 import Test exposing (Test, describe, fuzz, fuzz2, test)
 import Text exposing (..)
@@ -11,7 +12,7 @@ import Text exposing (..)
 static : Test
 static =
     describe "static text"
-        [ fuzz2 nonEmptyString nonEmptyString "works with any non empty string" <|
+        [ fuzz2 Fuzz.string textFuzzer "works with any non empty valid string" <|
             \name text ->
                 E.object [ ( name, E.string text ) ]
                     |> Text.fromJson
@@ -20,13 +21,19 @@ static =
                             [ Static text
                             ]
                         )
+        , test "an empty string renders an empty list" <|
+            \_ ->
+                E.object [ ( "foo", E.string "" ) ]
+                    |> Text.fromJson
+                    |> Expect.equal
+                        (single "foo" [])
         ]
 
 
 parameters : Test
 parameters =
     describe "parameters"
-        [ fuzz nonEmptyString "it constructs one parameter" <|
+        [ fuzz textFuzzer "it constructs one parameter" <|
             \string ->
                 E.object [ ( "", E.string ("{{" ++ string ++ "}}") ) ]
                     |> Text.fromJson
@@ -35,26 +42,26 @@ parameters =
                             [ Parameter string
                             ]
                         )
-        , test "it constructs many parameters" <|
-            \_ ->
-                E.object [ ( "", E.string "{{ bar }}{{ baz }}" ) ]
+        , fuzz2 textFuzzer textFuzzer "it constructs many parameters" <|
+            \param1 param2 ->
+                E.object [ ( "", E.string ("{{" ++ param1 ++ "}}{{" ++ param2 ++ "}}") ) ]
                     |> Text.fromJson
                     |> Expect.equal
                         (single ""
-                            [ Parameter "bar"
-                            , Parameter "baz"
+                            [ Parameter param1
+                            , Parameter param2
                             ]
                         )
-        , test "it preserves static text before, between and around parameters" <|
-            \_ ->
-                E.object [ ( "", E.string "one, {{ two }}, three, {{ four }}, five" ) ]
+        , fuzz2 textFuzzer textFuzzer "it preserves static text before, between and around parameters" <|
+            \param1 param2 ->
+                E.object [ ( "", E.string ("one, {{" ++ param1 ++ "}}, three, {{" ++ param2 ++ "}}, five") ) ]
                     |> Text.fromJson
                     |> Expect.equal
                         (single ""
                             [ Static "one, "
-                            , Parameter "two"
+                            , Parameter param1
                             , Static ", three, "
-                            , Parameter "four"
+                            , Parameter param2
                             , Static ", five"
                             ]
                         )
@@ -110,8 +117,21 @@ single key texts =
         ]
 
 
-nonEmptyString : Fuzzer String
-nonEmptyString =
-    Fuzz.map (String.cons 'a') Fuzz.string
-        |> Fuzz.map (String.filter (\char -> not <| List.member char [ '{', '}' ]))
-        |> Fuzz.map String.trim
+textFuzzer : Fuzzer String
+textFuzzer =
+    Fuzz.char
+        |> Fuzz.map
+            (\c ->
+                if c == ' ' || c == '{' || c == '}' then
+                    '-'
+
+                else
+                    c
+            )
+        |> nonEmptyFuzzer
+        |> Fuzz.map String.fromList
+
+
+nonEmptyFuzzer : Fuzzer a -> Fuzzer (List a)
+nonEmptyFuzzer fuzzer =
+    Fuzz.map2 (::) fuzzer (Fuzz.list fuzzer)
