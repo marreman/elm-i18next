@@ -18,7 +18,7 @@ tests =
                     [ Static "baz"
                     ]
                     |> Elm.fromText "foo"
-                    |> expectValidFile simpleStaticFile
+                    |> expectEqualAndValidFiles [ simpleStaticFile ]
         , test "it works with the most simple parameterized case" <|
             \_ ->
                 singleTextModule "bar"
@@ -26,7 +26,7 @@ tests =
                     , Parameter "bonk"
                     ]
                     |> Elm.fromText "foo"
-                    |> expectValidFile simpleParameterizedFile
+                    |> expectEqualAndValidFiles [ simpleParameterizedFile ]
         , test "it camel cases everything" <|
             \_ ->
                 singleTextModule "foo-19(}_bar-BAZ__@#$%^&"
@@ -34,7 +34,7 @@ tests =
                     , Parameter "te-23332st$%^&ing1"
                     ]
                     |> Elm.fromText "a very-^&*%*!STRANGE---ååname"
-                    |> expectValidFile camelCasedFile
+                    |> expectEqualAndValidFiles [ camelCasedFile ]
         , test "it prefixes bad names" <|
             \_ ->
                 singleTextModule "456"
@@ -42,7 +42,7 @@ tests =
                     , Parameter "789"
                     ]
                     |> Elm.fromText "123"
-                    |> expectValidFile prefixedFile
+                    |> expectEqualAndValidFiles [ prefixedFile ]
         , test "it returns multiple files" <|
             \_ ->
                 Dict.fromList
@@ -52,7 +52,7 @@ tests =
                     , ( [ "b", "c", "d" ], Dict.fromList [ ( "d", [ Static "d" ] ) ] )
                     ]
                     |> Elm.fromText "a"
-                    |> Expect.equalLists multipleFiles
+                    |> expectEqualAndValidFiles multipleFiles
         ]
 
 
@@ -137,18 +137,37 @@ multipleFiles =
 -- HELPERS
 
 
-expectValidFile : Elm.File -> List Elm.File -> Expectation
-expectValidFile expectedFile actualFiles =
-    case Elm.DSLParser.parse expectedFile.content of
-        Ok _ ->
-            Expect.equal [ expectedFile ] actualFiles
+expectEqualAndValidFiles : List Elm.File -> List Elm.File -> Expectation
+expectEqualAndValidFiles expectedFiles actualFiles =
+    Expect.all
+        [ Expect.equalLists expectedFiles
+        , expectValidFiles
+        ]
+        actualFiles
 
-        Err _ ->
-            let
-                error =
-                    "I couldn't parse this expected Elm file:\n\n"
-                        ++ expectedFile.content
-                        ++ "\n\nHere's what the code you tested, returned:\n\n"
-                        ++ Debug.toString actualFiles
-            in
-            Expect.fail error
+
+expectValidFiles : List Elm.File -> Expectation
+expectValidFiles files =
+    let
+        validateFile file =
+            Result.andThen <|
+                \_ ->
+                    Elm.DSLParser.parse file.content
+                        |> Result.map (\_ -> ())
+                        |> Result.mapError (Tuple.pair file)
+    in
+    case List.foldl validateFile (Ok ()) files of
+        Ok _ ->
+            Expect.pass
+
+        Err ( file, error ) ->
+            Expect.fail <|
+                "I tried to parse this Elm file:\n\n"
+                    ++ indent file.content
+                    ++ "\n\nBut I encountered the following error(s):\n\n"
+                    ++ indent (Debug.toString error)
+
+
+indent : String -> String
+indent =
+    String.lines >> List.map ((++) "\t") >> String.join "\n"
