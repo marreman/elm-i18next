@@ -9,9 +9,9 @@ import Test exposing (..)
 import Text exposing (Text(..))
 
 
-static : Test
-static =
-    describe "static text"
+tests : Test
+tests =
+    describe "Elm.fromText"
         [ test "it works with the most simple static case" <|
             \_ ->
                 singleTextModule "bar"
@@ -56,21 +56,8 @@ static =
         ]
 
 
-expectValidFile : Elm.File -> List Elm.File -> Expectation
-expectValidFile expectedFile actualFiles =
-    case Elm.DSLParser.parse expectedFile.content of
-        Ok _ ->
-            Expect.equal [ expectedFile ] actualFiles
 
-        Err _ ->
-            let
-                error =
-                    "I couldn't parse this expected Elm file:\n\n"
-                        ++ expectedFile.content
-                        ++ "\n\nHere's what the code you tested, returned:\n\n"
-                        ++ Debug.toString actualFiles
-            in
-            Expect.fail error
+-- EXPECTED FILES
 
 
 simpleStaticFile : Elm.File
@@ -146,108 +133,22 @@ multipleFiles =
     ]
 
 
-suite : Test
-suite =
-    test "Text.fromJson" <|
-        \_ ->
-            Dict.fromList
-                [ ( []
-                  , Dict.fromList
-                        [ ( "foo", [ Text.Static "bar" ] )
-                        , ( "1bad__key", [ Text.Static "with", Text.Parameter "1bad_param" ] )
-                        , ( "repeated_param", [ Text.Parameter "foo", Text.Static ", I repeat, ", Text.Parameter "foo" ] )
-                        ]
-                  )
-                , ( [ "temporality", "date_formats" ]
-                  , Dict.fromList
-                        [ ( "year difference"
-                          , [ Text.Static "The difference between "
-                            , Text.Parameter "first_year"
-                            , Text.Static " and "
-                            , Text.Parameter "second_year"
-                            , Text.Static " is "
-                            , Text.Parameter "year_difference"
-                            , Text.Static "."
-                            ]
-                          )
-                        ]
-                  )
-                , ( [ "temporality" ]
-                  , Dict.fromList
-                        [ ( "current_date_and_time"
-                          , [ Text.Static "The date is "
-                            , Text.Parameter "date"
-                            , Text.Static " and the time is "
-                            , Text.Parameter "time"
-                            ]
-                          )
-                        , ( "current_time"
-                          , [ Text.Static "The time is "
-                            , Text.Parameter "time"
-                            , Text.Static " now."
-                            ]
-                          )
-                        ]
-                  )
-                ]
-                |> Elm.fromText "Text"
-                |> Expect.equal
-                    [ { content = module1, path = [ "Text", "Temporality", "DateFormats" ] }
-                    , { content = module2, path = [ "Text", "Temporality" ] }
-                    , { content = module3, path = [ "Text" ] }
-                    ]
+
+-- HELPERS
 
 
-module1 : String
-module1 =
-    """module Text.Temporality.DateFormats exposing (..)
+expectValidFile : Elm.File -> List Elm.File -> Expectation
+expectValidFile expectedFile actualFiles =
+    case Elm.DSLParser.parse expectedFile.content of
+        Ok _ ->
+            Expect.equal [ expectedFile ] actualFiles
 
-
-yearDifference : (String -> a) -> { firstYear : a, secondYear : a, yearDifference : a } -> List a
-yearDifference fromString parameters =
-    [ fromString "The difference between "
-    , parameters.firstYear
-    , fromString " and "
-    , parameters.secondYear
-    , fromString " is "
-    , parameters.yearDifference
-    , fromString "."
-    ]
-"""
-
-
-module2 : String
-module2 =
-    """module Text.Temporality exposing (..)
-
-
-currentDateAndTime : (String -> a) -> { date : a, time : a } -> List a
-currentDateAndTime fromString parameters =
-    [ fromString "The date is ", parameters.date, fromString " and the time is ", parameters.time ]
-
-
-currentTime : (String -> a) -> { time : a } -> List a
-currentTime fromString parameters =
-    [ fromString "The time is ", parameters.time, fromString " now." ]
-"""
-
-
-module3 : String
-module3 =
-    """module Text exposing (..)
-
-
-t1badKey : (String -> a) -> { p1badParam : a } -> List a
-t1badKey fromString parameters =
-    [ fromString "with", parameters.p1badParam ]
-
-
-foo : String
-foo =
-    "bar"
-
-
-repeatedParam : (String -> a) -> { foo : a } -> List a
-repeatedParam fromString parameters =
-    [ parameters.foo, fromString ", I repeat, ", parameters.foo ]
-"""
+        Err _ ->
+            let
+                error =
+                    "I couldn't parse this expected Elm file:\n\n"
+                        ++ expectedFile.content
+                        ++ "\n\nHere's what the code you tested, returned:\n\n"
+                        ++ Debug.toString actualFiles
+            in
+            Expect.fail error
