@@ -46,10 +46,10 @@ tests =
         , test "it returns multiple files" <|
             \_ ->
                 Dict.fromList
-                    [ ( [], Dict.fromList [ ( "a", [ Text.Static "a" ] ) ] )
-                    , ( [ "b" ], Dict.fromList [ ( "b", [ Text.Static "b" ] ) ] )
-                    , ( [ "b", "c" ], Dict.fromList [ ( "c", [ Text.Static "c" ] ) ] )
-                    , ( [ "b", "c", "d" ], Dict.fromList [ ( "d", [ Text.Static "d" ] ) ] )
+                    [ ( [], Dict.fromList [ ( "a", [ Static "a" ] ) ] )
+                    , ( [ "b" ], Dict.fromList [ ( "b", [ Static "b" ] ) ] )
+                    , ( [ "b", "c" ], Dict.fromList [ ( "c", [ Static "c" ] ) ] )
+                    , ( [ "b", "c", "d" ], Dict.fromList [ ( "d", [ Static "d" ] ) ] )
                     ]
                     |> Elm.fromText "a"
                     |> Expect.equalLists multipleFiles
