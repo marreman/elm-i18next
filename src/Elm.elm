@@ -7,7 +7,6 @@ import Html.Attributes exposing (name)
 import List.Extra as List
 import String.Case as String
 import Text exposing (Text)
-import Tuple.Extra as Tuple
 
 
 type alias File =

@@ -1,7 +1,6 @@
 module Text exposing (..)
 
 import Dict exposing (Dict)
-import Dict.Extra exposing (mapKeys)
 import Json.Decode as Json
 import Parser exposing ((|.), (|=))
 
