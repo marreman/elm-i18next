@@ -104,9 +104,9 @@ foo19BarBaz fromString parameters =
 
 prefixedFile : Elm.File
 prefixedFile =
-    { path = [ "123" ]
+    { path = [ "T123" ]
     , content =
-        """module 123 exposing (..)
+        """module T123 exposing (..)
 
 
 t456 : (String -> a) -> { p789 : a } -> List a

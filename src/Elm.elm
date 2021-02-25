@@ -19,7 +19,7 @@ fromText : String -> Dict Text.Path Text.Module -> List File
 fromText rootModule =
     let
         preparePath path =
-            List.map String.toCamelCaseUpper (rootModule :: path)
+            List.map (String.toCamelCaseUpper >> adaptName 'T') (rootModule :: path)
     in
     Dict.foldl (\path module_ files -> makeFile (preparePath path) module_ :: files) []
 
