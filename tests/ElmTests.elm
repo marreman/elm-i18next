@@ -2,9 +2,121 @@ module ElmTests exposing (..)
 
 import Dict
 import Elm
-import Expect
-import Test exposing (Test, test)
-import Text
+import Elm.DSLParser
+import Expect exposing (Expectation)
+import Helper exposing (..)
+import Test exposing (..)
+import Text exposing (Text(..))
+
+
+static : Test
+static =
+    describe "static text"
+        [ test "it works with the most simple static case" <|
+            \_ ->
+                singleTextModule "bar"
+                    [ Static "baz"
+                    ]
+                    |> Elm.fromText "foo"
+                    |> expectValidFile simpleStaticFile
+        , test "it works with the most simple parameterized case" <|
+            \_ ->
+                singleTextModule "bar"
+                    [ Static "baz"
+                    , Parameter "bonk"
+                    ]
+                    |> Elm.fromText "foo"
+                    |> expectValidFile simpleParameterizedFile
+        , test "it camel cases everything" <|
+            \_ ->
+                singleTextModule "foo-19(}_bar-BAZ__@#$%^&"
+                    [ Static "im left !@#$%^&*()_+ alone"
+                    , Parameter "te-23332st$%^&ing1"
+                    ]
+                    |> Elm.fromText "a very-^&*%*!STRANGE---ååname"
+                    |> expectValidFile camelCasedFile
+        , test "it prefixes bad names" <|
+            \_ ->
+                singleTextModule "456"
+                    [ Static "im left alone"
+                    , Parameter "789"
+                    ]
+                    |> Elm.fromText "123"
+                    |> expectValidFile prefixedFile
+        ]
+
+
+expectValidFile : Elm.File -> List Elm.File -> Expectation
+expectValidFile expectedFile actualFiles =
+    case Elm.DSLParser.parse expectedFile.content of
+        Ok _ ->
+            Expect.equal [ expectedFile ] actualFiles
+
+        Err _ ->
+            let
+                error =
+                    "I couldn't parse this expected Elm file:\n\n"
+                        ++ expectedFile.content
+                        ++ "\n\nHere's what the code you tested, returned:\n\n"
+                        ++ Debug.toString actualFiles
+            in
+            Expect.fail error
+
+
+simpleStaticFile : Elm.File
+simpleStaticFile =
+    { path = [ "Foo" ]
+    , content =
+        """module Foo exposing (..)
+
+
+bar : String
+bar =
+    "baz"
+"""
+    }
+
+
+simpleParameterizedFile : Elm.File
+simpleParameterizedFile =
+    { path = [ "Foo" ]
+    , content =
+        """module Foo exposing (..)
+
+
+bar : (String -> a) -> { bonk : a } -> List a
+bar fromString parameters =
+    [ fromString "baz", parameters.bonk ]
+"""
+    }
+
+
+camelCasedFile : Elm.File
+camelCasedFile =
+    { path = [ "AVeryStrangeName" ]
+    , content =
+        """module AVeryStrangeName exposing (..)
+
+
+foo19BarBaz : (String -> a) -> { te23332stIng1 : a } -> List a
+foo19BarBaz fromString parameters =
+    [ fromString "im left !@#$%^&*()_+ alone", parameters.te23332stIng1 ]
+"""
+    }
+
+
+prefixedFile : Elm.File
+prefixedFile =
+    { path = [ "123" ]
+    , content =
+        """module 123 exposing (..)
+
+
+t456 : (String -> a) -> { p789 : a } -> List a
+t456 fromString parameters =
+    [ fromString "im left alone", parameters.p789 ]
+"""
+    }
 
 
 suite : Test
