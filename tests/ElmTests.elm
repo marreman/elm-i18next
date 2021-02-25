@@ -43,6 +43,16 @@ static =
                     ]
                     |> Elm.fromText "123"
                     |> expectValidFile prefixedFile
+        , test "it returns multiple files" <|
+            \_ ->
+                Dict.fromList
+                    [ ( [], Dict.fromList [ ( "a", [ Text.Static "a" ] ) ] )
+                    , ( [ "b" ], Dict.fromList [ ( "b", [ Text.Static "b" ] ) ] )
+                    , ( [ "b", "c" ], Dict.fromList [ ( "c", [ Text.Static "c" ] ) ] )
+                    , ( [ "b", "c", "d" ], Dict.fromList [ ( "d", [ Text.Static "d" ] ) ] )
+                    ]
+                    |> Elm.fromText "a"
+                    |> Expect.equalLists multipleFiles
         ]
 
 
@@ -117,6 +127,23 @@ t456 fromString parameters =
     [ fromString "im left alone", parameters.p789 ]
 """
     }
+
+
+multipleFiles : List Elm.File
+multipleFiles =
+    [ { content = "module A.B.C.D exposing (..)\n\n\nd : String\nd =\n    \"d\"\n"
+      , path = [ "A", "B", "C", "D" ]
+      }
+    , { content = "module A.B.C exposing (..)\n\n\nc : String\nc =\n    \"c\"\n"
+      , path = [ "A", "B", "C" ]
+      }
+    , { content = "module A.B exposing (..)\n\n\nb : String\nb =\n    \"b\"\n"
+      , path = [ "A", "B" ]
+      }
+    , { content = "module A exposing (..)\n\n\na : String\na =\n    \"a\"\n"
+      , path = [ "A" ]
+      }
+    ]
 
 
 suite : Test
