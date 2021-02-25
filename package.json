@@ -7,6 +7,7 @@
   },
   "scripts": {
     "prepublishOnly": "npm run build",
+    "prepare": "elm-tooling install",
     "build": "elm make src/Program.elm --output=bin/program.js --optimize",
     "generate-examples": "examples/helloWorld/generate && examples/multiLevel/generate"
   },
@@ -29,5 +30,8 @@
   "files": [
     "bin/elm-i18next",
     "bin/program.js"
-  ]
+  ],
+  "devDependencies": {
+    "elm-tooling": "^1.2.0"
+  }
 }
