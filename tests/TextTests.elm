@@ -1,8 +1,9 @@
 module TextTests exposing (..)
 
-import Dict exposing (Dict)
+import Dict
 import Expect
-import Fuzz exposing (Fuzzer)
+import Fuzz
+import Helper exposing (..)
 import Html exposing (text)
 import Json.Encode as E
 import Test exposing (Test, describe, fuzz, fuzz2, test)
@@ -12,12 +13,12 @@ import Text exposing (..)
 static : Test
 static =
     describe "static text"
-        [ fuzz2 Fuzz.string textFuzzer "works with any non empty valid string" <|
+        [ fuzz2 Fuzz.string Helper.textFuzzer "works with any non empty valid string" <|
             \name text ->
                 E.object [ ( name, E.string text ) ]
                     |> Text.fromJson
                     |> Expect.equal
-                        (single name
+                        (singleTextModule name
                             [ Static text
                             ]
                         )
@@ -26,19 +27,19 @@ static =
                 E.object [ ( "foo", E.string "" ) ]
                     |> Text.fromJson
                     |> Expect.equal
-                        (single "foo" [])
+                        (singleTextModule "foo" [])
         ]
 
 
 parameters : Test
 parameters =
     describe "parameters"
-        [ fuzz textFuzzer "it constructs one parameter" <|
+        [ fuzz Helper.textFuzzer "it constructs one parameter" <|
             \string ->
                 E.object [ ( "", E.string ("{{" ++ string ++ "}}") ) ]
                     |> Text.fromJson
                     |> Expect.equal
-                        (single ""
+                        (singleTextModule ""
                             [ Parameter string
                             ]
                         )
@@ -47,7 +48,7 @@ parameters =
                 E.object [ ( "", E.string ("{{" ++ param1 ++ "}}{{" ++ param2 ++ "}}") ) ]
                     |> Text.fromJson
                     |> Expect.equal
-                        (single ""
+                        (singleTextModule ""
                             [ Parameter param1
                             , Parameter param2
                             ]
@@ -57,7 +58,7 @@ parameters =
                 E.object [ ( "", E.string ("one, {{" ++ param1 ++ "}}, three, {{" ++ param2 ++ "}}, five") ) ]
                     |> Text.fromJson
                     |> Expect.equal
-                        (single ""
+                        (singleTextModule ""
                             [ Static "one, "
                             , Parameter param1
                             , Static ", three, "
@@ -98,40 +99,3 @@ nesting =
                         , ( [ "b", "c", "d" ], Dict.fromList [ ( "d", [ Text.Static "d" ] ) ] )
                         ]
                     )
-
-
-
--- HELPERS
-
-
-single : String -> List Text -> Dict Path Module
-single key texts =
-    Dict.fromList
-        [ ( []
-          , Dict.fromList
-                [ ( key
-                  , texts
-                  )
-                ]
-          )
-        ]
-
-
-textFuzzer : Fuzzer String
-textFuzzer =
-    Fuzz.char
-        |> Fuzz.map
-            (\c ->
-                if c == ' ' || c == '{' || c == '}' then
-                    '-'
-
-                else
-                    c
-            )
-        |> nonEmptyFuzzer
-        |> Fuzz.map String.fromList
-
-
-nonEmptyFuzzer : Fuzzer a -> Fuzzer (List a)
-nonEmptyFuzzer fuzzer =
-    Fuzz.map2 (::) fuzzer (Fuzz.list fuzzer)
