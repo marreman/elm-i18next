@@ -6,6 +6,7 @@
     "elm-i18next": "bin/elm-i18next"
   },
   "scripts": {
+    "prepublishOnly": "npm run build",
     "build": "elm make src/Program.elm --output=bin/program.js --optimize",
     "generate-examples": "examples/helloWorld/generate && examples/multiLevel/generate"
   },
