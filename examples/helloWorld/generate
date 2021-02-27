@@ -1,5 +1,0 @@
-#!/usr/bin/env sh
-
-cd "$(dirname "$0")"
-
-cat helloWorld.json | ../../bin/elm-i18next

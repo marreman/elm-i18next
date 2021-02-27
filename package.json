@@ -6,11 +6,7 @@
     "elm-i18next": "bin/elm-i18next"
   },
   "scripts": {
-    "prepublishOnly": "npm run build && npm run test",
-    "prepare": "elm-tooling install",
-    "test": "elm-test",
-    "build": "elm make src/Program.elm --output=bin/program.js --optimize",
-    "generate-examples": "examples/helloWorld/generate && examples/multiLevel/generate"
+    "prepublishOnly": "make"
   },
   "repository": {
     "type": "git",
@@ -29,11 +25,6 @@
   },
   "homepage": "https://github.com/marreman/elm-i18next#readme",
   "files": [
-    "bin/elm-i18next",
-    "bin/program.js"
-  ],
-  "devDependencies": {
-    "elm-test": "^0.19.1-revision6",
-    "elm-tooling": "^1.2.0"
-  }
+    "bin"
+  ]
 }
