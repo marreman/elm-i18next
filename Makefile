@@ -1,4 +1,4 @@
-all: build run-tests generate-examples
+all: build run-tests build-example
 
 build:
 	elm make src/Program.elm --output=bin/program.js --optimize
@@ -6,6 +6,5 @@ build:
 run-tests:
 	elm-test
 
-generate-examples:
-	./examples/helloWorld/generate.sh
-	./examples/multiLevel/generate.sh
+build-example:
+	cd ./example; ./build.sh
