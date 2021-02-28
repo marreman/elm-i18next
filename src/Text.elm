@@ -1,16 +1,8 @@
 module Text exposing (..)
 
 import Dict exposing (Dict)
-import Json.Decode as Json
+import Json.Decode as Decode exposing (Decoder)
 import Parser exposing ((|.), (|=))
-
-
-type alias Path =
-    List String
-
-
-type alias Module =
-    Dict String (List Text)
 
 
 type Text
@@ -18,54 +10,65 @@ type Text
     | Parameter String
 
 
-type Token
-    = String_ String
-    | Value_ Json.Value
+type alias Group =
+    Dict String (List Text)
 
 
-fromJson : Json.Value -> Dict Path Module
-fromJson value =
-    run [] value Dict.empty
+type alias Path =
+    List String
 
 
-run : Path -> Json.Value -> Dict Path Module -> Dict Path Module
-run name value modules =
-    decodeTokens value
-        |> groupStringsAndValues
-        |> Tuple.mapFirst (Dict.map parseString)
-        |> combineAndRecurse name modules
+type Node
+    = Leaf (List Text)
+    | Branch (Dict String Node)
 
 
-decodeTokens : Json.Value -> Dict String Token
-decodeTokens value =
+fromJson : Decode.Value -> Result Decode.Error (Dict Path Group)
+fromJson json =
+    Decode.decodeValue parser json
+        |> Result.map
+            (\nodes ->
+                flatten [] nodes Dict.empty
+                    |> Dict.foldl
+                        (\path group groups -> Dict.insert (List.reverse path) group groups)
+                        Dict.empty
+            )
+
+
+parser : Decoder (Dict String Node)
+parser =
+    Decode.dict <|
+        Decode.oneOf
+            [ Decode.map (parseText >> Leaf) Decode.string
+            , Decode.map Branch (Decode.lazy (\_ -> parser))
+            ]
+
+
+flatten : Path -> Dict String Node -> Dict Path Group -> Dict Path Group
+flatten path nodes initialGroups =
     let
-        tokenDecoder =
-            Json.dict <|
-                Json.oneOf
-                    [ Json.string |> Json.map String_
-                    , Json.value |> Json.map Value_
-                    ]
+        ( newGroup, moreGroups ) =
+            Dict.foldl
+                (\name value ( group, groups ) ->
+                    case value of
+                        Leaf s ->
+                            ( Dict.insert name s group
+                            , groups
+                            )
+
+                        Branch moreNodes ->
+                            ( group
+                            , flatten (name :: path) moreNodes Dict.empty
+                            )
+                )
+                ( Dict.empty, initialGroups )
+                nodes
     in
-    Json.decodeValue tokenDecoder value
-        |> Result.withDefault Dict.empty
+    Dict.insert path newGroup (Dict.union initialGroups moreGroups)
 
 
-groupStringsAndValues : Dict String Token -> ( Dict String String, Dict String Json.Value )
-groupStringsAndValues =
-    let
-        group name token groups =
-            case token of
-                String_ string ->
-                    Tuple.mapFirst (Dict.insert name string) groups
-
-                Value_ value ->
-                    Tuple.mapSecond (Dict.insert name value) groups
-    in
-    Dict.foldl group ( Dict.empty, Dict.empty )
-
-
-parseString : String -> String -> List Text
-parseString _ string =
+parseText : String -> List Text
+parseText string =
     let
         step parts =
             Parser.oneOf
@@ -88,9 +91,5 @@ parseString _ string =
         |> Result.withDefault []
 
 
-combineAndRecurse : Path -> Dict Path Module -> ( Module, Dict String Json.Value ) -> Dict Path Module
-combineAndRecurse path modules ( strings, values ) =
-    Dict.foldl
-        (\name -> run (name :: path))
-        (Dict.insert (List.reverse path) strings modules)
-        values
+
+-- reversePaths : Dict Path Group

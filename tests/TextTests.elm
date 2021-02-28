@@ -10,6 +10,10 @@ import Test exposing (Test, describe, fuzz, fuzz2, test)
 import Text exposing (..)
 
 
+expectOk =
+    Expect.equal << Ok
+
+
 tests : Test
 tests =
     describe "Text.fromJson"
@@ -17,7 +21,7 @@ tests =
             \name text ->
                 E.object [ ( name, E.string text ) ]
                     |> Text.fromJson
-                    |> Expect.equal
+                    |> expectOk
                         (singleTextModule name
                             [ Static text
                             ]
@@ -26,13 +30,13 @@ tests =
             \_ ->
                 E.object [ ( "foo", E.string "" ) ]
                     |> Text.fromJson
-                    |> Expect.equal
+                    |> expectOk
                         (singleTextModule "foo" [])
         , fuzz textFuzzer "it constructs one parameter" <|
             \string ->
                 E.object [ ( "", E.string ("{{" ++ string ++ "}}") ) ]
                     |> Text.fromJson
-                    |> Expect.equal
+                    |> expectOk
                         (singleTextModule ""
                             [ Parameter string
                             ]
@@ -41,7 +45,7 @@ tests =
             \param1 param2 ->
                 E.object [ ( "", E.string ("{{" ++ param1 ++ "}}{{" ++ param2 ++ "}}") ) ]
                     |> Text.fromJson
-                    |> Expect.equal
+                    |> expectOk
                         (singleTextModule ""
                             [ Parameter param1
                             , Parameter param2
@@ -51,7 +55,7 @@ tests =
             \param1 param2 ->
                 E.object [ ( "", E.string ("one, {{" ++ param1 ++ "}}, three, {{" ++ param2 ++ "}}, five") ) ]
                     |> Text.fromJson
-                    |> Expect.equal
+                    |> expectOk
                         (singleTextModule ""
                             [ Static "one, "
                             , Parameter param1
@@ -80,7 +84,7 @@ tests =
                       )
                     ]
                     |> Text.fromJson
-                    |> Expect.equal
+                    |> expectOk
                         (Dict.fromList
                             [ ( [], Dict.fromList [ ( "a", [ Static "a" ] ) ] )
                             , ( [ "b" ], Dict.fromList [ ( "b", [ Static "b" ] ) ] )

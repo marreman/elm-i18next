@@ -5,7 +5,7 @@ import Fuzz exposing (Fuzzer)
 import Text exposing (Text)
 
 
-singleTextModule : String -> List Text -> Dict Text.Path Text.Module
+singleTextModule : String -> List Text -> Dict Text.Path Text.Group
 singleTextModule key texts =
     Dict.fromList
         [ ( []

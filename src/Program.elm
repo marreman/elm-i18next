@@ -37,9 +37,12 @@ init flags options =
             { file | path = options.outputDirectory :: file.path }
     in
     Text.fromJson flags.json
-        |> Elm.fromText options.baseElmModule
-        |> List.map (prependOutputDirectory >> writeFile)
-        |> Cmd.batch
+        |> Result.map
+            (Elm.fromText options.baseElmModule
+                >> List.map (prependOutputDirectory >> writeFile)
+                >> Cmd.batch
+            )
+        |> Result.withDefault Cmd.none
 
 
 type alias FlagsIncludingArgv =

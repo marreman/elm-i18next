@@ -15,7 +15,7 @@ type alias File =
     }
 
 
-fromText : String -> Dict Text.Path Text.Module -> List File
+fromText : String -> Dict Text.Path Text.Group -> List File
 fromText rootModule =
     let
         preparePath path =
@@ -24,7 +24,7 @@ fromText rootModule =
     Dict.foldl (\path module_ files -> makeFile (preparePath path) module_ :: files) []
 
 
-makeFile : Text.Path -> Text.Module -> File
+makeFile : Text.Path -> Text.Group -> File
 makeFile path module_ =
     { path = path
     , content =
