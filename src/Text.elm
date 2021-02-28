@@ -1,5 +1,6 @@
 module Text exposing (..)
 
+import Collection exposing (Collection)
 import Dict exposing (Dict)
 import Json.Decode as Decode exposing (Decoder)
 import Parser exposing ((|.), (|=), Parser)
@@ -10,34 +11,28 @@ type Text
     | Parameter String
 
 
-type alias Group =
-    Dict String (List Text)
-
-
 type alias Path =
     List String
 
 
 type Node
-    = Leaf (List Text)
+    = Leaf String
     | Branch (Dict String Node)
 
 
-fromJson : Decode.Value -> Result Decode.Error (Dict Path Group)
+fromJson : Decode.Value -> Result Decode.Error (Collection (List Text))
 fromJson json =
     Decode.decodeValue decoder json
-        |> Result.map
-            (\nodes ->
-                flatten [] nodes Dict.empty
-                    |> reverseGroupPaths
-            )
+        |> Result.map (\nodes -> flatten [] nodes Dict.empty)
+        |> Result.map (Collection.mapKeys List.reverse)
+        |> Result.map (Collection.mapValues (Parser.run parser >> Result.withDefault []))
 
 
 decoder : Decoder (Dict String Node)
 decoder =
     Decode.dict <|
         Decode.oneOf
-            [ Decode.map (Parser.run parser >> Result.withDefault [] >> Leaf) Decode.string
+            [ Decode.map Leaf Decode.string
             , Decode.map Branch (Decode.lazy (\_ -> decoder))
             ]
 
@@ -65,15 +60,15 @@ parser =
     Parser.loop [] step
 
 
-flatten : Path -> Dict String Node -> Dict Path Group -> Dict Path Group
+flatten : Path -> Dict String Node -> Collection String -> Collection String
 flatten path nodes initialGroups =
     let
         ( newGroup, moreGroups ) =
             Dict.foldl
                 (\name value ( group, groups ) ->
                     case value of
-                        Leaf s ->
-                            ( Dict.insert name s group
+                        Leaf string ->
+                            ( Dict.insert name string group
                             , groups
                             )
 
@@ -86,8 +81,3 @@ flatten path nodes initialGroups =
                 nodes
     in
     Dict.insert path newGroup (Dict.union initialGroups moreGroups)
-
-
-reverseGroupPaths : Dict Path Group -> Dict Path Group
-reverseGroupPaths =
-    Dict.foldl (\path -> Dict.insert (List.reverse path)) Dict.empty

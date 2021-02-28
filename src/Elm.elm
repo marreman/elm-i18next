@@ -1,5 +1,6 @@
 module Elm exposing (..)
 
+import Collection exposing (Collection)
 import Dict exposing (Dict)
 import Elm.CodeGen exposing (..)
 import Elm.Pretty
@@ -15,7 +16,7 @@ type alias File =
     }
 
 
-fromText : String -> Dict Text.Path Text.Group -> List File
+fromText : String -> Collection (List Text) -> List File
 fromText rootModule =
     let
         preparePath path =
@@ -24,7 +25,7 @@ fromText rootModule =
     Dict.foldl (\path module_ files -> makeFile (preparePath path) module_ :: files) []
 
 
-makeFile : Text.Path -> Text.Group -> File
+makeFile : Text.Path -> Dict String (List Text) -> File
 makeFile path module_ =
     { path = path
     , content =

@@ -1,11 +1,12 @@
 module Helper exposing (..)
 
-import Dict exposing (Dict)
+import Collection exposing (Collection)
+import Dict
 import Fuzz exposing (Fuzzer)
 import Text exposing (Text)
 
 
-singleTextModule : String -> List Text -> Dict Text.Path Text.Group
+singleTextModule : String -> List Text -> Collection (List Text)
 singleTextModule key texts =
     Dict.fromList
         [ ( []
