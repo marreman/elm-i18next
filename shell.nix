@@ -5,12 +5,7 @@ pkgs.mkShell {
   buildInputs = [
     pkgs.elmPackages.elm
     pkgs.elmPackages.elm-test
+    pkgs.elmPackages.elm-format
     pkgs.nodejs
   ];
-
-  shellHook = ''
-    echo "elm: $(elm --version)"
-    echo "elm-test: $(elm-test --version)"
-    echo "node: $(node --version)"
-  '';
 }
