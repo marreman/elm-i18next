@@ -37,11 +37,9 @@ init flags options =
             { file | path = options.outputDirectory :: file.path }
     in
     Text.fromJson flags.json
-        |> Result.map
-            (Elm.fromText options.baseElmModule
-                >> List.map (prependOutputDirectory >> writeFile)
-                >> Cmd.batch
-            )
+        |> Result.map (Elm.fromText options.baseElmModule)
+        |> Result.map (List.map (prependOutputDirectory >> writeFile))
+        |> Result.map Cmd.batch
         |> Result.withDefault Cmd.none
 
 
