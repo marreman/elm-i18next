@@ -14,5 +14,5 @@ build-example:
 check-formatting:
 	elm-format --validate ./
 
-generate-and-commit-changelog:
+generate-changelog:
 	node generate-changelog.js > CHANGELOG.md
