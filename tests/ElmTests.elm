@@ -53,6 +53,14 @@ tests =
                     ]
                     |> Elm.fromText "a"
                     |> expectEqualAndValidFiles multipleFiles
+        , test "it doesn't output empty modules" <|
+            \_ ->
+                Dict.fromList
+                    [ ( [], Dict.fromList [] )
+                    , ( [ "b" ], Dict.fromList [] )
+                    ]
+                    |> Elm.fromText "a"
+                    |> expectEqualAndValidFiles []
         ]
 
 

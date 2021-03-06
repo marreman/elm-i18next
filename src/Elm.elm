@@ -22,7 +22,15 @@ fromText rootModule =
         preparePath path =
             List.map (String.toCamelCaseUpper >> adaptName 'T') (rootModule :: path)
     in
-    Dict.foldl (\path module_ files -> makeFile (preparePath path) module_ :: files) []
+    Dict.foldl
+        (\path group files ->
+            if Dict.isEmpty group then
+                files
+
+            else
+                makeFile (preparePath path) group :: files
+        )
+        []
 
 
 makeFile : Text.Path -> Dict String (List Text) -> File

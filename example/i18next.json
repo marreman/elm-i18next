@@ -4,5 +4,6 @@
     "user_greeting": "Hello, {{ name }}!",
     "anonymous_greeting": "Hello, friend!"
   },
-  "current_date_and_time": "The current date is {{ currentDate }} and the time is {{ currentTime }}"
+  "current_date_and_time": "The current date is {{ currentDate }} and the time is {{ currentTime }}",
+  "i will not be in the output since I don't have any keys": {}
 }
