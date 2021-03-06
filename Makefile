@@ -10,4 +10,6 @@ check-formatting:
 	elm-format --validate ./
 
 build-example:
+	rm -r ./example/elm-stuff
+	rm -r ./example/src/Text*
 	cd ./example; ./build.sh
