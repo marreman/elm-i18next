@@ -7,8 +7,8 @@ run-tests:
 	elm-test
 
 build-example:
-	rm -r ./example/elm-stuff
-	rm -r ./example/src/Text*
+	rm -rf ./example/elm-stuff
+	rm -rf ./example/src/Text*
 	cd ./example; ./build.sh
 
 check-formatting:

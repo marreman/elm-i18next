@@ -112,4 +112,9 @@ tests =
                             , ( [ "b", "c", "d" ], Dict.fromList [ ( "d", [ Static "d" ] ) ] )
                             ]
                         )
+        , test "it fails when given json with int" <|
+            \_ ->
+                E.object [ ( "a", E.int 1 ) ]
+                    |> Text.fromJson
+                    |> Expect.err
         ]

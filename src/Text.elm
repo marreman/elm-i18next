@@ -2,6 +2,7 @@ module Text exposing (..)
 
 import Collection exposing (Collection)
 import Dict exposing (Dict)
+import Error exposing (Error)
 import Json.Decode as Decode exposing (Decoder)
 import Parser exposing ((|.), (|=), Parser)
 
@@ -20,9 +21,10 @@ type Node
     | Branch (Dict String Node)
 
 
-fromJson : Decode.Value -> Result Decode.Error (Collection (List Text))
+fromJson : Decode.Value -> Result Error (Collection (List Text))
 fromJson json =
     Decode.decodeValue decoder json
+        |> Result.mapError Error.JsonError
         |> Result.map (\nodes -> flatten [] nodes Dict.empty)
         |> Result.map (Collection.mapKeys List.reverse)
         |> Result.map (Collection.mapValues (Parser.run parser >> Result.withDefault []))

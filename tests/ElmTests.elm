@@ -7,6 +7,7 @@ import Expect exposing (Expectation)
 import Helper exposing (..)
 import Test exposing (..)
 import Text exposing (Text(..))
+import Util exposing (..)
 
 
 tests : Test
@@ -174,8 +175,3 @@ expectValidFiles files =
                     ++ indent file.content
                     ++ "\n\nBut I encountered the following error(s):\n\n"
                     ++ indent (Debug.toString error)
-
-
-indent : String -> String
-indent =
-    String.lines >> List.map ((++) "\t") >> String.join "\n"

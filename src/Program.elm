@@ -4,6 +4,7 @@ import Cli.Option as Option
 import Cli.OptionsParser as OptionsParser
 import Cli.Program as Program
 import Elm
+import Error
 import Json.Decode exposing (Value)
 import Text
 
@@ -40,6 +41,7 @@ init flags options =
         |> Result.map (Elm.fromText options.baseElmModule)
         |> Result.map (List.map (prependOutputDirectory >> writeFile))
         |> Result.map Cmd.batch
+        |> Result.mapError (Error.toString >> printAndExitFailure)
         |> Result.withDefault Cmd.none
 
 
