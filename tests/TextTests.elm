@@ -6,7 +6,7 @@ import Fuzz
 import Helper exposing (..)
 import Html exposing (text)
 import Json.Encode as E
-import Test exposing (Test, describe, fuzz, fuzz2, test)
+import Test exposing (..)
 import Text exposing (..)
 
 
@@ -64,7 +64,27 @@ tests =
                             , Static ", five"
                             ]
                         )
-        , test "it flattens deeply nested json properly" <|
+        , test "it works with nested json objects" <|
+            \_ ->
+                E.object
+                    [ ( "a", E.object [ ( "a", E.string "a" ) ] )
+                    , ( "b"
+                      , E.object
+                            [ ( "b", E.string "b" )
+                            , ( "b/a", E.object [] )
+                            ]
+                      )
+                    ]
+                    |> Text.fromJson
+                    |> expectOk
+                        (Dict.fromList
+                            [ ( [], Dict.fromList [] ) -- keeping empty objects like this one...
+                            , ( [ "a" ], Dict.fromList [ ( "a", [ Static "a" ] ) ] )
+                            , ( [ "b" ], Dict.fromList [ ( "b", [ Static "b" ] ) ] )
+                            , ( [ "b", "b/a" ], Dict.fromList [] ) -- ... and this one
+                            ]
+                        )
+        , test "it works with deeply nested json objects" <|
             \_ ->
                 E.object
                     [ ( "a", E.string "a" )

@@ -61,23 +61,23 @@ parser =
 
 
 flatten : Path -> Dict String Node -> Collection String -> Collection String
-flatten path nodes initialGroups =
+flatten path nodes initialCollection =
     let
-        ( newGroup, moreGroups ) =
+        ( newGroup, updatedCollection ) =
             Dict.foldl
-                (\name value ( group, groups ) ->
+                (\name value ( group, collection ) ->
                     case value of
                         Leaf string ->
                             ( Dict.insert name string group
-                            , groups
+                            , collection
                             )
 
                         Branch moreNodes ->
                             ( group
-                            , flatten (name :: path) moreNodes Dict.empty
+                            , flatten (name :: path) moreNodes collection
                             )
                 )
-                ( Dict.empty, initialGroups )
+                ( Dict.empty, initialCollection )
                 nodes
     in
-    Dict.insert path newGroup (Dict.union initialGroups moreGroups)
+    Dict.insert path newGroup updatedCollection
