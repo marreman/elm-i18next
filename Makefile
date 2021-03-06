@@ -1,4 +1,4 @@
-all: build run-tests build-example check-formatting
+verify: build run-tests build-example check-formatting
 
 build:
 	elm make ./src/Program.elm --output=./bin/program.js --optimize
@@ -13,3 +13,6 @@ build-example:
 
 check-formatting:
 	elm-format --validate ./
+
+generate-and-commit-changelog:
+	node generate-changelog.js > CHANGELOG.md

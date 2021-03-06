@@ -1,0 +1,111 @@
+## v0.0.4
+
+- be64a9f 0.0.4
+- b20b77d Don't turn empty groups into empty Elm modules
+- 1b7cf1a Fix: All groups weren't outputted
+- 83fd5b2 Make sure we're not checking the formatting of the old example output
+- 2ef61f6 Clear example build output before building it
+- f88597b Add check-formatting rule to Makefile
+
+## v0.0.3
+
+- 08379e0 0.0.3
+- b924597 0.0.2
+- c72ca34 Sequence many calls to Result.map for readability
+- 02b82ef Trying out a collection type
+- ddf6505 Rename and restructure a bit
+- 6205ce3 Initial refactor
+- c168dfb Depend on elm-format and don't log the versions
+- a66f8cc Remove .envrc
+- 78c127d Add Install and Usage instructions
+
+## v0.0.2
+
+- d8b3841 0.0.2
+- d97761e Kebab-case and rename CLI arguments
+- a8e890f Better, testable example
+- 209973c Nix and Make
+- cfae728 Make sure module names also adapt when encountering invalid names
+- 024d8d4 Improve tests
+
+## v0.0.1
+
+- c1ba817 Remove unused Elm deps and upgrade others
+- a07e02a Add elm-test as a dependency and make sure to run tests before publishing
+- 17a5011 Setup elm-tooling to manage, well, Elm tools
+- e9a0a3a Remove build artifact and make sure to build before publishing
+- a0093fc Add readme stating work in progress
+- 8a90cf2 Change version to 0.0.1 and add lockfile
+- 6897eb6 Use List.Extra.unique over Set.fromList >> toList
+- 349a858 Deal with reoccurring parameters
+- 95d244b Rename bin
+- 8141700 Rename to @marreman/elm-i18next
+- 94c8ad1 Add Elm build output
+- 55484a3 Add files field
+- f43338f Add example usage
+- 4b779d1 Add script to regenerate examples
+- 87e29e1 Update comment
+- a19173d Adapt parameters as well
+- 391aed2 Adapt names
+- d0e28ca Breakout normalize function
+- 52221cb Camelcase parameters
+- 107ce37 Add multilevel example
+- fde1147 Fix path bug
+- 2121b28 Import readFileSync
+- a53554c Add hello world example
+- 0913937 Normalize style
+- 3f41e65 Create folders
+- d84d5f3 Default root Elm module is Text
+- 066fb9a Use stdin to pass in the correct json
+- f5238ad Code style and version
+- a28bac5 Fix tests
+- 1924ec2 Naming
+- 50c515c Write sync
+- 3ba2e35 Remove unused print port
+- bb17db8 Remove unused name filed
+- 768fad5 Don't version Elm output
+- d20dbfa Progress
+- c8d885c Start to wire things up
+- fa11b32 Try to break up function gen
+- ff0e5ac Change String.Case import
+- 62c0806 Sort functions and values
+- 300e961 Correct module name and casing
+- a2ade6d Make tests pass
+- f38ec46 Generate Elm code
+- 1dd2977 Don't hard code the top path
+- 0b91c14 Work with naming a bit
+- 9ba72af Reverse module paths
+- 9cf6dd7 Rename to Text
+- 1acd35a Text
+- 13cdeda Remove unused imports
+- 26b91be Fix tests
+- 9a8f159 Progress
+- b0eabfc WIP
+- 7be222d WIP
+- 15dea36 WIP
+- af46289 Simplify
+- b39d0bf WIP
+- dbd38af WIP
+- f83a6da Remove all
+- 78d9bd1 Beginning with uppercase chars is prohibited
+- b176574 Make sure parameter names get normalized
+- fae4687 Remove notes
+- b1399ed Improve parameterized text
+- dd7de65 Add test for existing implementation
+- a693ab6 Thinking about design
+- 6c4505a Default module name is Text
+- 6f554a5 Format with prettier
+- d060d7b Deal with invalid names
+- eb327e8 Remove duplicate tests
+- c9735ea Update all deps
+- d47037b Elm format now accepts `exposing (..)`
+- ab54334 Remove unused dependency
+- 3b6b9c0 Improve cli
+- 06563e2 Handle replacements with double curly braces ({{}})
+- fef7e40 Make sure to only format the generated code
+- 1077228 Add bin script
+- fa87ae7 Fix e2e tests
+- 64ccc71 Begin e2e tests
+- 02e1700 Improve
+- b83ba5b Rename function
+- 6915a2c Initial commit
