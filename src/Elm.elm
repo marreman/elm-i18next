@@ -1,7 +1,6 @@
 module Elm exposing (..)
 
-import Collection exposing (Collection)
-import Dict exposing (Dict)
+import Dict
 import Elm.CodeGen exposing (..)
 import Elm.Pretty
 import Html.Attributes exposing (name)
@@ -16,7 +15,7 @@ type alias File =
     }
 
 
-fromText : String -> Collection (List Text) -> List File
+fromText : String -> Text.Collection -> List File
 fromText rootModule =
     let
         preparePath path =
@@ -33,7 +32,7 @@ fromText rootModule =
         []
 
 
-makeFile : Text.Path -> Dict String (List Text) -> File
+makeFile : Text.Path -> Text.Group -> File
 makeFile path module_ =
     { path = path
     , content =

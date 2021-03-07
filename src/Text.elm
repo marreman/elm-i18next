@@ -1,10 +1,20 @@
 module Text exposing (..)
 
-import Collection exposing (Collection)
 import Dict exposing (Dict)
-import Error exposing (Error)
 import Json.Decode as Decode exposing (Decoder)
 import Parser exposing ((|.), (|=), Parser)
+
+
+type alias Collection =
+    Dict Path Group
+
+
+type alias Path =
+    List String
+
+
+type alias Group =
+    Dict String (List Text)
 
 
 type Text
@@ -12,30 +22,36 @@ type Text
     | Parameter String
 
 
-type alias Path =
-    List String
-
-
 type Node
-    = Leaf String
+    = Leaf (List Text)
     | Branch (Dict String Node)
 
 
-fromJson : Decode.Value -> Result Error (Collection (List Text))
+fromJson : Decode.Value -> Result Decode.Error Collection
 fromJson json =
     Decode.decodeValue decoder json
-        |> Result.mapError Error.JsonError
         |> Result.map (\nodes -> flatten [] nodes Dict.empty)
-        |> Result.map (Collection.mapKeys List.reverse)
-        |> Result.map (Collection.mapValues (Parser.run parser >> Result.withDefault []))
+        |> Result.map reverseKeys
 
 
 decoder : Decoder (Dict String Node)
 decoder =
+    let
+        parse string =
+            case Parser.run parser string of
+                Ok text ->
+                    Decode.succeed text
+
+                Err _ ->
+                    Decode.fail "Hint: If I've seen '{{' that marks the beginning of a parameter, I also need to it to be closed with '}}'."
+    in
     Decode.dict <|
         Decode.oneOf
-            [ Decode.map Leaf Decode.string
-            , Decode.map Branch (Decode.lazy (\_ -> decoder))
+            [ Decode.string
+                |> Decode.andThen parse
+                |> Decode.map Leaf
+            , Decode.lazy (\_ -> decoder)
+                |> Decode.map Branch
             ]
 
 
@@ -62,7 +78,7 @@ parser =
     Parser.loop [] step
 
 
-flatten : Path -> Dict String Node -> Collection String -> Collection String
+flatten : Path -> Dict String Node -> Collection -> Collection
 flatten path nodes initialCollection =
     let
         ( newGroup, updatedCollection ) =
@@ -83,3 +99,8 @@ flatten path nodes initialCollection =
                 nodes
     in
     Dict.insert path newGroup updatedCollection
+
+
+reverseKeys : Collection -> Collection
+reverseKeys =
+    Dict.foldl (\key -> Dict.insert (List.reverse key)) Dict.empty

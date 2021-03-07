@@ -4,9 +4,9 @@ import Cli.Option as Option
 import Cli.OptionsParser as OptionsParser
 import Cli.Program as Program
 import Elm
-import Error
-import Json.Decode exposing (Value)
+import Json.Decode as Decode
 import Text
+import Util exposing (indent)
 
 
 type alias Options =
@@ -36,13 +36,20 @@ init flags options =
     let
         prependOutputDirectory file =
             { file | path = options.outputDirectory :: file.path }
+
+        result =
+            Text.fromJson flags.json
+                |> Result.map (Elm.fromText options.baseElmModule)
     in
-    Text.fromJson flags.json
-        |> Result.map (Elm.fromText options.baseElmModule)
-        |> Result.map (List.map (prependOutputDirectory >> writeFile))
-        |> Result.map Cmd.batch
-        |> Result.mapError (Error.toString >> printAndExitFailure)
-        |> Result.withDefault Cmd.none
+    case result of
+        Ok files ->
+            List.map (prependOutputDirectory >> writeFile) files
+                |> Cmd.batch
+
+        Err error ->
+            printAndExitFailure <|
+                "There was a problem with the JSON file that I got. I can only accept JSON files consisting of objects and strings. Here's the decoding error:\n\n"
+                    ++ indent (Decode.errorToString error)
 
 
 type alias FlagsIncludingArgv =
@@ -50,7 +57,7 @@ type alias FlagsIncludingArgv =
 
 
 type alias Flags =
-    { json : Value }
+    { json : Decode.Value }
 
 
 main : Program.StatelessProgram Never Flags

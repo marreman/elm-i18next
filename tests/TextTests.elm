@@ -117,4 +117,9 @@ tests =
                 E.object [ ( "a", E.int 1 ) ]
                     |> Text.fromJson
                     |> Expect.err
+        , test "it fails when a parameter is not closed" <|
+            \_ ->
+                E.object [ ( "a", E.string "foo {{ bar" ) ]
+                    |> Text.fromJson
+                    |> Expect.err
         ]
