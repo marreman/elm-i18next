@@ -1,6 +1,6 @@
 {
   "name": "@marreman/elm-i18next",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Generate Elm modules from i18n translation JSON files.",
   "bin": {
     "elm-i18next": "bin/elm-i18next"
